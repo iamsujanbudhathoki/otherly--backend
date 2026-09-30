@@ -3,7 +3,6 @@ import { CommonEntity } from '../common/common.entity';
 import { TokenEnum } from '../../constants/appConstant';
 
 export enum TokenOwnerType {
-  ADVISER = 'adviser',
   ADMIN = 'admin',
 }
 

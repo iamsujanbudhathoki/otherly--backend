@@ -10,11 +10,24 @@
   "spec": {
     "outputDirectory": "public",
     "specVersion": 3,
+    "basePath": "/api/v1",
+    "securityDefinitions": {
+      "jwt": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
     "spec": {
+      "info": {
+        "title": "Stradmont Solutions API",
+        "version": "1.0.0",
+        "description": "Backend REST API for Stradmont Solutions (stradmontsolutions.com)"
+      },
       "servers": [
         {
-          "url": "https://abc.com/api/v1",
-          "description": "prouduction server"
+          "url": "https://api.stradmontsolutions.com/api/v1",
+          "description": "Production server"
         },
         {
           "url": "http://localhost:4000/api/v1",
@@ -24,6 +37,8 @@
     }
   },
   "routes": {
-    "routesDir": "src/routes"
+    "basePath": "/api/v1",
+    "routesDir": "src/routes",
+    "authenticationModule": "src/middlewares/authentication.middleware.ts"
   }
 }

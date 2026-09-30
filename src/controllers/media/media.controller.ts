@@ -7,26 +7,26 @@ import {
   Post,
   Request,
   Route,
+  Security,
+  Tags,
   UploadedFile,
 } from 'tsoa';
-
 import { autoInjectable } from 'tsyringe';
-
 import { DotenvConfig } from '../../config/env.config';
 import { MediaType } from '../../constants/appConstant';
 import mediaService from '../../services/media/media.service';
 
-
 @Route('media')
+@Tags('Media')
 @autoInjectable()
 class MediaController extends Controller {
   @Post('/')
+  @Security('jwt')
   async upload(
-    @Request() req: express.Request,
+    @Request() _req: express.Request,
     @UploadedFile() file: Express.Multer.File,
     @FormField() mediaType: string,
   ) {
-    //enum => array. (values)
     const validMediaTypeList = Object.values(MediaType);
     if (!validMediaTypeList.includes(mediaType as MediaType)) {
       return {
@@ -35,21 +35,19 @@ class MediaController extends Controller {
       };
     }
 
-    const validateResponse = this.validate(mediaType as MediaType, file);
+    const validateResponse = this.validate(file);
     if (validateResponse !== true) return validateResponse;
-    // upload.
 
-    //generate file name;
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
     const updatedFileName = uniqueSuffix + ext;
 
-    if (!fs.existsSync(DotenvConfig.TEMP_FOLDER_PATH)) {
-      fs.mkdirSync(DotenvConfig.TEMP_FOLDER_PATH);
+    if (!fs.existsSync(DotenvConfig.MEDIA_TEMP_PATH)) {
+      fs.mkdirSync(DotenvConfig.MEDIA_TEMP_PATH, { recursive: true });
     }
 
     fs.writeFileSync(
-      path.resolve(DotenvConfig.TEMP_FOLDER_PATH, updatedFileName),
+      path.resolve(DotenvConfig.MEDIA_TEMP_PATH, updatedFileName),
       file.buffer,
     );
 
@@ -57,27 +55,17 @@ class MediaController extends Controller {
       mediaType as MediaType,
       file.mimetype,
       updatedFileName,
+      file.size,
     );
     return res;
   }
 
-  //
-  private validate(mediaType: MediaType, file: Express.Multer.File) {
-    let acceptedExtensions: string[] = [];
-    let fileSize: number = 0;
+  private validate(file: Express.Multer.File) {
+    const acceptedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg'];
+    const maxFileSize = 1024 * 1024 * 5; // 5MB
 
-    //
-    switch (mediaType) {
-      case MediaType.PROFILE_IMAGE:
-        acceptedExtensions = ['.jpeg', '.png'];
-        fileSize = 1024 * 1024 * 1; // 1MB
-        break;
-
-      default:
-    }
-
-    //extension validation.
-    if (!acceptedExtensions.includes(path.extname(file.originalname))) {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (!acceptedExtensions.includes(ext)) {
       return {
         status: 'error',
         message:
@@ -86,17 +74,15 @@ class MediaController extends Controller {
       };
     }
 
-    //fileSize validation.
-    if (file.size > fileSize) {
+    if (file.size > maxFileSize) {
       return {
         status: 'error',
         message:
-          'File size exceeded. Maximum size is : ' +
-          fileSize / (1024 * 1024) +
-          ' MB',
+          'File size exceeded. Maximum allowed size is ' +
+          maxFileSize / (1024 * 1024) +
+          'MB',
       };
     }
-
     return true;
   }
 }

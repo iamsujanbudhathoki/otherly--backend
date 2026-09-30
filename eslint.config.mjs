@@ -1,10 +1,20 @@
 import pluginJs from '@eslint/js';
-import tseslint from 'typescript-eslint';
 import prettier from 'eslint-plugin-prettier';
+import tseslint from 'typescript-eslint';
 
 export default [
   { files: ['**/*.{js,mjs,cjs,ts}'] },
-  { ignores: ['node_modules', 'dist', 'build', 'public', 'log', '.github'] },
+  {
+    ignores: [
+      'node_modules',
+      'dist',
+      'build',
+      'public',
+      'log',
+      '.github',
+      'src/routes/routes.ts',
+    ],
+  },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -15,7 +25,7 @@ export default [
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
-      'prettier/prettier': 'error', // Enforce Prettier formatting as ESLint errors
+      'prettier/prettier': 'error',
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
@@ -23,7 +33,6 @@ export default [
           varsIgnorePattern: '^_',
         },
       ],
-
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
     },
   },

@@ -37,8 +37,6 @@ export class RequestValidator {
   };
 }
 
-
-
 export function createValidatorMiddleware(schema: any) {
   class ValidatorMiddleware {
     public use(req: Request, res: Response, next: NextFunction) {

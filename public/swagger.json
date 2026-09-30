@@ -7,14 +7,226 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"ProductEntity": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"name": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"tag": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"logo": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"body": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"id",
+					"createdAt",
+					"deletedAt",
+					"name",
+					"slug",
+					"tag",
+					"status",
+					"logo",
+					"url",
+					"body",
+					"isActive"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse_ProductEntity-Array_": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"items": {
+									"$ref": "#/components/schemas/ProductEntity"
+								},
+								"type": "array"
+							},
+							{
+								"items": {
+									"items": {
+										"$ref": "#/components/schemas/ProductEntity"
+									},
+									"type": "array"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse_ProductEntity_": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/ProductEntity"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/ProductEntity"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateProductSchema": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"tag": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"logo": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"body": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"name",
+					"slug",
+					"tag",
+					"status",
+					"logo",
+					"url",
+					"body"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateProductSchema": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"tag": {
+						"type": "string"
+					},
+					"status": {
+						"type": "string"
+					},
+					"logo": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"body": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse_null_": {
+				"properties": {
+					"data": {
+						"items": {
+							"type": "number",
+							"enum": [
+								null
+							],
+							"nullable": true
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"MediaType": {
 				"enum": [
-					"PROFILE_IMAGE",
 					"PRODUCT_IMAGE",
-					"CAROUSEL_IMAGE",
-					"STORE_LOGO",
-					"BLOG_THUMBNAIL",
-					"CAREER_CV"
+					"LETTER_COVER"
 				],
 				"type": "string"
 			},
@@ -60,8 +272,561 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"AdminLoginResponse": {
+			"LetterKind": {
+				"enum": [
+					"Letter",
+					"Note",
+					"Study"
+				],
+				"type": "string"
+			},
+			"LetterSection": {
+				"properties": {
+					"heading": {
+						"type": "string"
+					},
+					"paragraphs": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"paragraphs"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LetterEntity": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"number": {
+						"type": "string"
+					},
+					"kind": {
+						"$ref": "#/components/schemas/LetterKind"
+					},
+					"date": {
+						"type": "string"
+					},
+					"readTime": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"body": {
+						"type": "string"
+					},
+					"image": {
+						"type": "string"
+					},
+					"content": {
+						"items": {
+							"$ref": "#/components/schemas/LetterSection"
+						},
+						"type": "array"
+					},
+					"author": {
+						"type": "string"
+					},
+					"authorTitle": {
+						"type": "string"
+					},
+					"isPublished": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"id",
+					"createdAt",
+					"deletedAt",
+					"slug",
+					"number",
+					"kind",
+					"date",
+					"readTime",
+					"title",
+					"body",
+					"image",
+					"content",
+					"author",
+					"authorTitle",
+					"isPublished"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse_LetterEntity_": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/LetterEntity"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/LetterEntity"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LetterSectionSchema": {
+				"properties": {
+					"heading": {
+						"type": "string"
+					},
+					"paragraphs": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"paragraphs"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateLetterSchema": {
+				"properties": {
+					"slug": {
+						"type": "string"
+					},
+					"number": {
+						"type": "string"
+					},
+					"kind": {
+						"$ref": "#/components/schemas/LetterKind"
+					},
+					"date": {
+						"type": "string"
+					},
+					"readTime": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"body": {
+						"type": "string"
+					},
+					"image": {
+						"type": "string"
+					},
+					"content": {
+						"items": {
+							"$ref": "#/components/schemas/LetterSectionSchema"
+						},
+						"type": "array"
+					},
+					"author": {
+						"type": "string"
+					},
+					"authorTitle": {
+						"type": "string"
+					},
+					"isPublished": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"slug",
+					"number",
+					"kind",
+					"date",
+					"readTime",
+					"title",
+					"body",
+					"image",
+					"content",
+					"author",
+					"authorTitle"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateLetterSchema": {
+				"properties": {
+					"number": {
+						"type": "string"
+					},
+					"kind": {
+						"$ref": "#/components/schemas/LetterKind"
+					},
+					"date": {
+						"type": "string"
+					},
+					"readTime": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"body": {
+						"type": "string"
+					},
+					"image": {
+						"type": "string"
+					},
+					"content": {
+						"items": {
+							"$ref": "#/components/schemas/LetterSectionSchema"
+						},
+						"type": "array"
+					},
+					"author": {
+						"type": "string"
+					},
+					"authorTitle": {
+						"type": "string"
+					},
+					"isPublished": {
+						"type": "boolean"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MailType": {
+				"enum": [
+					"CONTACT_ADMIN_NOTIFICATION",
+					"CONTACT_USER_ACKNOWLEDGEMENT"
+				],
+				"type": "string"
+			},
+			"EmailDeliveryStatus": {
+				"enum": [
+					"PENDING",
+					"SENT",
+					"FAILED",
+					"SKIPPED"
+				],
+				"type": "string"
+			},
+			"Record_string.any_": {
 				"properties": {},
+				"additionalProperties": {},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"EmailLogEntity": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"recipient": {
+						"type": "string"
+					},
+					"replyTo": {
+						"type": "string"
+					},
+					"subject": {
+						"type": "string"
+					},
+					"mailType": {
+						"$ref": "#/components/schemas/MailType"
+					},
+					"htmlBody": {
+						"type": "string"
+					},
+					"textBody": {
+						"type": "string"
+					},
+					"status": {
+						"$ref": "#/components/schemas/EmailDeliveryStatus"
+					},
+					"messageId": {
+						"type": "string"
+					},
+					"errorMessage": {
+						"type": "string"
+					},
+					"metadata": {
+						"$ref": "#/components/schemas/Record_string.any_"
+					},
+					"sentAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"createdAt",
+					"deletedAt",
+					"recipient",
+					"subject",
+					"mailType",
+					"htmlBody",
+					"textBody",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse_EmailLogEntity_": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/EmailLogEntity"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/EmailLogEntity"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ContactTopic": {
+				"enum": [
+					"Partnership",
+					"Our Products",
+					"Investment",
+					"Other"
+				],
+				"type": "string"
+			},
+			"ContactStatus": {
+				"enum": [
+					"NEW",
+					"IN_PROGRESS",
+					"RESOLVED",
+					"ARCHIVED"
+				],
+				"type": "string"
+			},
+			"ContactUsEntity": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"company": {
+						"type": "string"
+					},
+					"topic": {
+						"$ref": "#/components/schemas/ContactTopic"
+					},
+					"message": {
+						"type": "string"
+					},
+					"status": {
+						"$ref": "#/components/schemas/ContactStatus"
+					}
+				},
+				"required": [
+					"id",
+					"createdAt",
+					"deletedAt",
+					"name",
+					"email",
+					"topic",
+					"message",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse_ContactUsEntity_": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/ContactUsEntity"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/ContactUsEntity"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateContactSchema": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"company": {
+						"type": "string"
+					},
+					"topic": {
+						"$ref": "#/components/schemas/ContactTopic"
+					},
+					"message": {
+						"type": "string"
+					},
+					"turnstileToken": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"email",
+					"topic",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateContactStatusSchema": {
+				"properties": {
+					"status": {
+						"$ref": "#/components/schemas/ContactStatus"
+					}
+				},
+				"required": [
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Role": {
+				"enum": [
+					"ADMIN",
+					"SUPER_ADMIN"
+				],
+				"type": "string"
+			},
+			"AdminPermission": {
+				"enum": [
+					"PRODUCT",
+					"LETTERS",
+					"CONTACTS",
+					"LOGS"
+				],
+				"type": "string"
+			},
+			"AdminLoginResponse": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"role": {
+						"$ref": "#/components/schemas/Role"
+					},
+					"permissions": {
+						"items": {
+							"$ref": "#/components/schemas/AdminPermission"
+						},
+						"type": "array"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"accessToken": {
+						"type": "string"
+					},
+					"refreshToken": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"email",
+					"role",
+					"permissions",
+					"isActive",
+					"accessToken",
+					"refreshToken"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -113,17 +878,198 @@
 				"additionalProperties": false
 			}
 		},
-		"securitySchemes": {}
+		"securitySchemes": {
+			"jwt": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
 	},
 	"info": {
-		"title": "rest-nodejs-starter",
+		"title": "Stradmont Solutions API",
 		"version": "1.0.0",
-		"license": {
-			"name": "ISC"
-		},
-		"contact": {}
+		"description": "Backend REST API for Stradmont Solutions (stradmontsolutions.com)"
 	},
 	"paths": {
+		"/products": {
+			"get": {
+				"operationId": "GetAllProducts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_ProductEntity-Array_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Products"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "activeOnly",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "CreateProduct",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_ProductEntity_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Products"
+				],
+				"security": [
+					{
+						"jwt": [
+							"PRODUCT"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateProductSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/products/{slug}": {
+			"get": {
+				"operationId": "GetProductBySlug",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_ProductEntity_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Products"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "slug",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"patch": {
+				"operationId": "UpdateProduct",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_ProductEntity_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Products"
+				],
+				"security": [
+					{
+						"jwt": [
+							"PRODUCT"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "slug",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateProductSchema"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteProduct",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Products"
+				],
+				"security": [
+					{
+						"jwt": [
+							"PRODUCT"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "slug",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/media": {
 			"post": {
 				"operationId": "Upload",
@@ -158,7 +1104,14 @@
 						}
 					}
 				},
-				"security": [],
+				"tags": [
+					"Media"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -179,6 +1132,690 @@
 									"file",
 									"mediaType"
 								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/letters": {
+			"get": {
+				"operationId": "GetAllLetters",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"pagination": {
+											"properties": {
+												"lastPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"prevPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"nextPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"currentPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"count": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"lastPage",
+												"prevPage",
+												"nextPage",
+												"currentPage",
+												"count"
+											],
+											"type": "object"
+										},
+										"data": {
+											"items": {
+												"$ref": "#/components/schemas/LetterEntity"
+											},
+											"type": "array"
+										},
+										"success": {
+											"type": "boolean"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"pagination",
+										"data",
+										"success",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Stradmont Letters"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "kind",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/LetterKind"
+						}
+					},
+					{
+						"in": "query",
+						"name": "publishedOnly",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "CreateLetter",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_LetterEntity_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Stradmont Letters"
+				],
+				"security": [
+					{
+						"jwt": [
+							"LETTERS"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateLetterSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/letters/{slug}": {
+			"get": {
+				"operationId": "GetLetterBySlug",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_LetterEntity_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Stradmont Letters"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "slug",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"patch": {
+				"operationId": "UpdateLetter",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_LetterEntity_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Stradmont Letters"
+				],
+				"security": [
+					{
+						"jwt": [
+							"LETTERS"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "slug",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateLetterSchema"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteLetter",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Stradmont Letters"
+				],
+				"security": [
+					{
+						"jwt": [
+							"LETTERS"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "slug",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/emails": {
+			"get": {
+				"operationId": "GetEmailLogs",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"pagination": {
+											"properties": {
+												"lastPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"prevPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"nextPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"currentPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"count": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"lastPage",
+												"prevPage",
+												"nextPage",
+												"currentPage",
+												"count"
+											],
+											"type": "object"
+										},
+										"data": {
+											"items": {
+												"$ref": "#/components/schemas/EmailLogEntity"
+											},
+											"type": "array"
+										},
+										"success": {
+											"type": "boolean"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"pagination",
+										"data",
+										"success",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Email Logs"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "status",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/EmailDeliveryStatus"
+						}
+					},
+					{
+						"in": "query",
+						"name": "mailType",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/MailType"
+						}
+					}
+				]
+			}
+		},
+		"/emails/{id}/retry": {
+			"post": {
+				"operationId": "RetryEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_EmailLogEntity_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Email Logs"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/contact": {
+			"post": {
+				"operationId": "SubmitContact",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_ContactUsEntity_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Contact Us"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateContactSchema"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetAllContacts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"pagination": {
+											"properties": {
+												"lastPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"prevPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"nextPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"currentPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"count": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"lastPage",
+												"prevPage",
+												"nextPage",
+												"currentPage",
+												"count"
+											],
+											"type": "object"
+										},
+										"data": {
+											"items": {
+												"$ref": "#/components/schemas/ContactUsEntity"
+											},
+											"type": "array"
+										},
+										"success": {
+											"type": "boolean"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"pagination",
+										"data",
+										"success",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Contact Us"
+				],
+				"security": [
+					{
+						"jwt": [
+							"CONTACTS"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "topic",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/ContactTopic"
+						}
+					},
+					{
+						"in": "query",
+						"name": "status",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/ContactStatus"
+						}
+					}
+				]
+			}
+		},
+		"/contact/{id}": {
+			"get": {
+				"operationId": "GetContactById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_ContactUsEntity_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Contact Us"
+				],
+				"security": [
+					{
+						"jwt": [
+							"CONTACTS"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteContact",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Contact Us"
+				],
+				"security": [
+					{
+						"jwt": [
+							"CONTACTS"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/contact/{id}/status": {
+			"patch": {
+				"operationId": "UpdateContactStatus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_ContactUsEntity_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Contact Us"
+				],
+				"security": [
+					{
+						"jwt": [
+							"CONTACTS"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateContactStatusSchema"
 							}
 						}
 					}
@@ -220,8 +1857,8 @@
 	},
 	"servers": [
 		{
-			"url": "https://abc.com/api/v1",
-			"description": "prouduction server"
+			"url": "https://api.stradmontsolutions.com/api/v1",
+			"description": "Production server"
 		},
 		{
 			"url": "http://localhost:4000/api/v1",

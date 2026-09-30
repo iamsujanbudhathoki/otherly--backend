@@ -1,17 +1,16 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import { Role } from '../../constants/appConstant';
+import BcryptService from '../../utils/bcrypt.util';
 import { CommonEntity } from '../common/common.entity';
 import { Token } from '../token/Token.entity';
-import BcryptService from '../../utils/bcrypt.util';
-import { Log } from '../log/Log.entity';
 
 export enum AdminPermission {
-  'CAROUSEL' = 'CAROUSEL',
-  'PRODUCT' = 'PRODUCT',
-  'USERS' = 'USERS',
-  'ORDERS' = 'ORDERS',
-  'LOGS' = 'LOGS',
+  PRODUCT = 'PRODUCT',
+  LETTERS = 'LETTERS',
+  CONTACTS = 'CONTACTS',
+  LOGS = 'LOGS',
 }
+
 @Entity({
   name: 'admin',
 })
@@ -23,6 +22,7 @@ export class Admin extends CommonEntity {
 
   @Column({
     name: 'email',
+    unique: true,
   })
   email: string;
 
@@ -34,12 +34,6 @@ export class Admin extends CommonEntity {
 
   @Column({ type: 'simple-array', default: [] })
   permissions: AdminPermission[];
-
-  @Column({
-    name: 'phone_number',
-    nullable: true,
-  })
-  phoneNumber: string;
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
@@ -54,9 +48,6 @@ export class Admin extends CommonEntity {
 
   @OneToMany(() => Token, (token) => token.ownerId)
   token: Token;
-
-  @OneToMany(() => Log, (log) => log.actionBy)
-  logs: Log[];
 
   @BeforeInsert()
   @BeforeUpdate()

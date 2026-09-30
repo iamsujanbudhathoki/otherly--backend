@@ -1,14 +1,23 @@
-version: "3.9"
+version: '3.9'
 
 services:
   app:
     build: .
-    container_name: node_app
+    container_name: stradmont_api
     ports:
-      - "5000:5000"
+      - '4000:4000'
     environment:
-      NODE_ENV: development
-      DATABASE_URL: postgres://postgres:postgres@db:5432/prasant_advisory
+      PORT: 4000
+      NODE_ENV: DEVELOPMENT
+      DB_TYPE: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: stradmont_solutions
+      DB_SSL: 'false'
+      FRONTEND_BASE_URL: http://localhost:3000
+      BASE_URL: http://localhost:4000
     depends_on:
       - db
     volumes:
@@ -17,14 +26,14 @@ services:
 
   db:
     image: postgres:15-alpine
-    container_name: postgres_db
+    container_name: stradmont_db
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: prasant_advisory
+      POSTGRES_DB: stradmont_solutions
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
 

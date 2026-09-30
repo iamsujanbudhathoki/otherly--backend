@@ -1,11 +1,7 @@
 import winston, { format } from 'winston';
 import { DotenvConfig, Environment } from './env.config';
 
-const { printf, timestamp, combine, errors, json } = format;
-
-const myFormat = printf(({ level, message, timestamp, stack }) => {
-  return `${timestamp} ${level}: ${stack || message}`;
-});
+const { timestamp, combine, errors, json } = format;
 
 let transports: (
   | winston.transports.ConsoleTransportInstance
@@ -20,16 +16,13 @@ if (DotenvConfig.NODE_ENV === Environment.DEVELOPMENT) {
   ];
 }
 
-// warn: message.
 const logger = winston.createLogger({
   level: DotenvConfig.LOG_LEVEL,
   format: combine(
-    // colorize(),
-    timestamp({ format: 'YYYY-mm-dd HH:mm' }),
+    timestamp({ format: 'YYYY-MM-DD HH:mm' }),
     errors({ stack: true }),
     json(),
-    // myFormat
-  ), // text - format.
+  ),
   transports,
 });
 

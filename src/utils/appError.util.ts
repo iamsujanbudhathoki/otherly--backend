@@ -1,9 +1,8 @@
-import { StatusCodes } from '../constants/statusCode';
-
 export class AppError extends Error {
   statusCode: number;
   isOperational: boolean;
   status: string;
+
   constructor(message: string, statusCode: number) {
     super(message);
     this.statusCode = statusCode;
@@ -13,27 +12,30 @@ export class AppError extends Error {
   }
 
   static badRequest(message: string) {
-    return new AppError(message, StatusCodes.BAD_REQUEST);
+    return new AppError(message, 400);
   }
+
   static unAuthorized(message: string) {
-    return new AppError(message, StatusCodes.UNAUTHORIZED);
+    return new AppError(message, 401);
   }
 
   static forbidden(message: string) {
-    return new AppError(message, StatusCodes.FORBIDDEN);
+    return new AppError(message, 403);
   }
 
   static notFound(message: string) {
-    return new AppError(message, StatusCodes.NOT_FOUND);
+    return new AppError(message, 404);
   }
+
   static conflict(message: string) {
-    return new AppError(message, StatusCodes.CONFLICT);
+    return new AppError(message, 409);
   }
 
   static internalServerError(message: string) {
-    return new AppError(message, StatusCodes.INTERNAL_SERVER_ERROR);
+    return new AppError(message, 500);
   }
+
   static alreadyExists(message: string) {
-    return new AppError(message, StatusCodes.CONFLICT);
+    return new AppError(message, 409);
   }
 }

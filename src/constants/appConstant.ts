@@ -1,5 +1,5 @@
 export default {
-  APP_NAME: 'Prashant Advisory',
+  APP_NAME: 'Stradmont Solutions',
 
   // Pagination
   DEFAULT_PAGE: 1,
@@ -12,31 +12,49 @@ export enum Environment {
   TEST = 'TEST',
 }
 
-export enum UserLoginType {
-  TRADITIONAL = 'TRADITIONAL', //register using email and password,
-  GOOGLE = 'GOOOGLE',
-}
-
 export enum MediaType {
-  PROFILE_IMAGE = 'PROFILE_IMAGE',
   PRODUCT_IMAGE = 'PRODUCT_IMAGE',
-  CAROUSEL_IMAGE = 'CAROUSEL_IMAGE',
-  STORE_LOGO = 'STORE_LOGO',
-  BLOG_THUMBNAIL = 'BLOG_THUMBNAIL',
-  CAREER_CV = 'CAREER_CV',
-
+  LETTER_COVER = 'LETTER_COVER',
 }
 
 export enum Role {
   ADMIN = 'ADMIN',
-  ASSOCIATE = 'USER',
   SUPER_ADMIN = 'SUPER_ADMIN',
-  NONE = 'NONE',
 }
 
 export enum TokenEnum {
   REFRESH_TOKEN = 'REFRESH_TOKEN',
   ACCESS_TOKEN = 'ACCESS_TOKEN',
-
 }
 
+export enum ContactTopic {
+  PARTNERSHIP = 'Partnership',
+  OUR_PRODUCTS = 'Our Products',
+  INVESTMENT = 'Investment',
+  OTHER = 'Other',
+}
+
+export enum ContactStatus {
+  NEW = 'NEW',
+  IN_PROGRESS = 'IN_PROGRESS',
+  RESOLVED = 'RESOLVED',
+  ARCHIVED = 'ARCHIVED',
+}
+
+export enum LetterKind {
+  LETTER = 'Letter',
+  NOTE = 'Note',
+  STUDY = 'Study',
+}
+
+export enum MailType {
+  CONTACT_ADMIN_NOTIFICATION = 'CONTACT_ADMIN_NOTIFICATION',
+  CONTACT_USER_ACKNOWLEDGEMENT = 'CONTACT_USER_ACKNOWLEDGEMENT',
+}
+
+export enum EmailDeliveryStatus {
+  PENDING = 'PENDING',
+  SENT = 'SENT',
+  FAILED = 'FAILED',
+  SKIPPED = 'SKIPPED',
+}

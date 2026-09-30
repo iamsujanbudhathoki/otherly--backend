@@ -11,7 +11,6 @@ class Server {
     this.bootstrap();
   }
 
-  // bootstrap
   async bootstrap() {
     await this.initializePath();
     AppDataSource.initialize()
@@ -21,7 +20,9 @@ class Server {
         configMiddleware(app);
         new RedisUtil().initialize();
         app.listen(DotenvConfig.PORT, () => {
-          console.log('TCP server established');
+          console.log(
+            `Stradmont Solutions API server running on http://localhost:${DotenvConfig.PORT}`,
+          );
         });
       })
       .catch((err) => {
@@ -30,9 +31,8 @@ class Server {
   }
 
   async initializePath() {
-    await PathUtils.ensureDir(DotenvConfig.TEMP_FOLDER_PATH);
     await PathUtils.ensureDir(DotenvConfig.MEDIA_TEMP_PATH);
-    await PathUtils.ensureDir(DotenvConfig.MEDIA_UPLOAD_PATH!);
+    await PathUtils.ensureDir(DotenvConfig.MEDIA_UPLOAD_PATH);
   }
 }
 
