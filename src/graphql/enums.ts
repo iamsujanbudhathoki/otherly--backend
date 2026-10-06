@@ -10,6 +10,8 @@ import {
   OrderStatus,
   RequestStatus,
   Role,
+  SellerType,
+  UserMode,
 } from '../constants/appConstant';
 import { AdminPermission } from '../entities/admin/Admin.entity';
 
@@ -17,6 +19,16 @@ export function registerEnums(): void {
   registerEnumType(Role, {
     name: 'Role',
     description: 'User role levels',
+  });
+
+  registerEnumType(UserMode, {
+    name: 'UserMode',
+    description: 'Active user mode (CUSTOMER or SELLER)',
+  });
+
+  registerEnumType(SellerType, {
+    name: 'SellerType',
+    description: 'Seller categorization type (INDIVIDUAL or COMPANY)',
   });
 
   registerEnumType(AdminPermission, {

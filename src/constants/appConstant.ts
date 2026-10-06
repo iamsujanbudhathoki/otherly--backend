@@ -29,6 +29,16 @@ export enum Role {
   CUSTOMER = 'CUSTOMER',
 }
 
+export enum UserMode {
+  CUSTOMER = 'CUSTOMER',
+  SELLER = 'SELLER',
+}
+
+export enum SellerType {
+  INDIVIDUAL = 'INDIVIDUAL',
+  COMPANY = 'COMPANY',
+}
+
 export enum TokenEnum {
   REFRESH_TOKEN = 'REFRESH_TOKEN',
   ACCESS_TOKEN = 'ACCESS_TOKEN',

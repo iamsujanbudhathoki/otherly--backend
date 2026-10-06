@@ -7,6 +7,271 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"Role": {
+				"enum": [
+					"ADMIN",
+					"SUPER_ADMIN",
+					"VENDOR",
+					"CUSTOMER"
+				],
+				"type": "string"
+			},
+			"UserMode": {
+				"enum": [
+					"CUSTOMER",
+					"SELLER"
+				],
+				"type": "string"
+			},
+			"CustomerProfileDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"shippingAddress": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"state": {
+						"type": "string"
+					},
+					"postalCode": {
+						"type": "string"
+					},
+					"country": {
+						"type": "string"
+					},
+					"preferences": {
+						"type": "string"
+					},
+					"notes": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SellerType": {
+				"enum": [
+					"INDIVIDUAL",
+					"COMPANY"
+				],
+				"type": "string"
+			},
+			"VendorProfileDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"sellerType": {
+						"$ref": "#/components/schemas/SellerType"
+					},
+					"businessName": {
+						"type": "string"
+					},
+					"panNumber": {
+						"type": "string"
+					},
+					"documentMediaIds": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"businessRegistrationNumber": {
+						"type": "string"
+					},
+					"businessAddress": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"state": {
+						"type": "string"
+					},
+					"postalCode": {
+						"type": "string"
+					},
+					"country": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"isVerified": {
+						"type": "boolean"
+					},
+					"rating": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalReviews": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"businessName",
+					"isVerified",
+					"rating",
+					"totalReviews"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserProfileResponse": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"role": {
+						"$ref": "#/components/schemas/Role"
+					},
+					"activeMode": {
+						"$ref": "#/components/schemas/UserMode"
+					},
+					"hasSellerProfile": {
+						"type": "boolean"
+					},
+					"isEmailVerified": {
+						"type": "boolean"
+					},
+					"isPhoneVerified": {
+						"type": "boolean"
+					},
+					"isVendorVerified": {
+						"type": "boolean"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"avatar": {
+						"type": "string"
+					},
+					"businessName": {
+						"type": "string"
+					},
+					"businessAddress": {
+						"type": "string"
+					},
+					"customer": {
+						"$ref": "#/components/schemas/CustomerProfileDto"
+					},
+					"vendor": {
+						"$ref": "#/components/schemas/VendorProfileDto"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"role",
+					"activeMode",
+					"hasSellerProfile",
+					"isEmailVerified",
+					"isPhoneVerified",
+					"isVendorVerified",
+					"isActive",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse_UserProfileResponse_": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/UserProfileResponse"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/UserProfileResponse"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"OnboardIndividualSellerSchema": {
+				"properties": {
+					"fullName": {
+						"type": "string"
+					},
+					"panNumber": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"fullName",
+					"panNumber",
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"OnboardCompanySellerSchema": {
+				"properties": {
+					"companyName": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"panNumber": {
+						"type": "string"
+					},
+					"documentMediaIds": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"companyName",
+					"address",
+					"panNumber"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"MediaType": {
 				"enum": [
 					"PRODUCT_IMAGE",
@@ -166,191 +431,6 @@
 							"nullable": true
 						},
 						"type": "array",
-						"nullable": true
-					},
-					"success": {
-						"type": "boolean"
-					},
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"data",
-					"success",
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Role": {
-				"enum": [
-					"ADMIN",
-					"SUPER_ADMIN",
-					"VENDOR",
-					"CUSTOMER"
-				],
-				"type": "string"
-			},
-			"CustomerProfileDto": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"shippingAddress": {
-						"type": "string"
-					},
-					"city": {
-						"type": "string"
-					},
-					"state": {
-						"type": "string"
-					},
-					"postalCode": {
-						"type": "string"
-					},
-					"country": {
-						"type": "string"
-					},
-					"preferences": {
-						"type": "string"
-					},
-					"notes": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"VendorProfileDto": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"businessName": {
-						"type": "string"
-					},
-					"businessRegistrationNumber": {
-						"type": "string"
-					},
-					"businessAddress": {
-						"type": "string"
-					},
-					"city": {
-						"type": "string"
-					},
-					"state": {
-						"type": "string"
-					},
-					"postalCode": {
-						"type": "string"
-					},
-					"country": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"isVerified": {
-						"type": "boolean"
-					},
-					"rating": {
-						"type": "number",
-						"format": "double"
-					},
-					"totalReviews": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"id",
-					"businessName",
-					"isVerified",
-					"rating",
-					"totalReviews"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"UserProfileResponse": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"role": {
-						"$ref": "#/components/schemas/Role"
-					},
-					"isEmailVerified": {
-						"type": "boolean"
-					},
-					"isPhoneVerified": {
-						"type": "boolean"
-					},
-					"isVendorVerified": {
-						"type": "boolean"
-					},
-					"isActive": {
-						"type": "boolean"
-					},
-					"phoneNumber": {
-						"type": "string"
-					},
-					"avatar": {
-						"type": "string"
-					},
-					"businessName": {
-						"type": "string"
-					},
-					"businessAddress": {
-						"type": "string"
-					},
-					"customer": {
-						"$ref": "#/components/schemas/CustomerProfileDto"
-					},
-					"vendor": {
-						"$ref": "#/components/schemas/VendorProfileDto"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"role",
-					"isEmailVerified",
-					"isPhoneVerified",
-					"isVendorVerified",
-					"isActive",
-					"createdAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiResponse_UserProfileResponse_": {
-				"properties": {
-					"data": {
-						"anyOf": [
-							{
-								"$ref": "#/components/schemas/UserProfileResponse"
-							},
-							{
-								"items": {
-									"$ref": "#/components/schemas/UserProfileResponse"
-								},
-								"type": "array"
-							}
-						],
 						"nullable": true
 					},
 					"success": {
@@ -629,6 +709,57 @@
 						"type": "string"
 					}
 				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ToggleModeResponse": {
+				"properties": {
+					"activeMode": {
+						"$ref": "#/components/schemas/UserMode"
+					},
+					"hasSellerProfile": {
+						"type": "boolean"
+					},
+					"isVendorVerified": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"activeMode",
+					"hasSellerProfile",
+					"isVendorVerified"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse_ToggleModeResponse_": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/ToggleModeResponse"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/ToggleModeResponse"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -1056,6 +1187,78 @@
 		"description": "Backend REST API for Otherly reverse-commerce marketplace"
 	},
 	"paths": {
+		"/vendor/onboard/individual": {
+			"post": {
+				"operationId": "OnboardIndividual",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_UserProfileResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Vendor"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/OnboardIndividualSellerSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/vendor/onboard/company": {
+			"post": {
+				"operationId": "OnboardCompany",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_UserProfileResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Vendor"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/OnboardCompanySellerSchema"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/media": {
 			"post": {
 				"operationId": "Upload",
@@ -1814,6 +2017,32 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/ApiResponse_UserProfileResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/auth/toggle-mode": {
+			"post": {
+				"operationId": "ToggleMode",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_ToggleModeResponse_"
 								}
 							}
 						}

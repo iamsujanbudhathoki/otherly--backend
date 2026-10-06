@@ -43,6 +43,8 @@ const messages = {
   actionCompleted: 'Action completed successfully',
   otpSent: 'Verification code sent to your mobile number successfully',
   otpVerified: 'Mobile number verified and logged in successfully',
+  modeSwitched: 'Active user mode switched successfully',
+  sellerOnboarded: 'Seller profile registered successfully',
 };
 
 export default messages;

@@ -4,6 +4,8 @@
 import type { TsoaRoute } from '@tsoa/runtime';
 import {  fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { VendorController } from './../controllers/vendor/vendor.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { MediaController } from './../controllers/media/media.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ContactController } from './../controllers/contact/contact.controller';
@@ -25,6 +27,113 @@ const expressAuthenticationRecasted = expressAuthentication as (req: ExRequest, 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
+    "Role": {
+        "dataType": "refEnum",
+        "enums": ["ADMIN","SUPER_ADMIN","VENDOR","CUSTOMER"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UserMode": {
+        "dataType": "refEnum",
+        "enums": ["CUSTOMER","SELLER"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CustomerProfileDto": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "shippingAddress": {"dataType":"string"},
+            "city": {"dataType":"string"},
+            "state": {"dataType":"string"},
+            "postalCode": {"dataType":"string"},
+            "country": {"dataType":"string"},
+            "preferences": {"dataType":"string"},
+            "notes": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SellerType": {
+        "dataType": "refEnum",
+        "enums": ["INDIVIDUAL","COMPANY"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "VendorProfileDto": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "sellerType": {"ref":"SellerType"},
+            "businessName": {"dataType":"string","required":true},
+            "panNumber": {"dataType":"string"},
+            "documentMediaIds": {"dataType":"array","array":{"dataType":"string"}},
+            "businessRegistrationNumber": {"dataType":"string"},
+            "businessAddress": {"dataType":"string"},
+            "city": {"dataType":"string"},
+            "state": {"dataType":"string"},
+            "postalCode": {"dataType":"string"},
+            "country": {"dataType":"string"},
+            "description": {"dataType":"string"},
+            "isVerified": {"dataType":"boolean","required":true},
+            "rating": {"dataType":"double","required":true},
+            "totalReviews": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UserProfileResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"string","required":true},
+            "name": {"dataType":"string"},
+            "email": {"dataType":"string"},
+            "role": {"ref":"Role","required":true},
+            "activeMode": {"ref":"UserMode","required":true},
+            "hasSellerProfile": {"dataType":"boolean","required":true},
+            "isEmailVerified": {"dataType":"boolean","required":true},
+            "isPhoneVerified": {"dataType":"boolean","required":true},
+            "isVendorVerified": {"dataType":"boolean","required":true},
+            "isActive": {"dataType":"boolean","required":true},
+            "phoneNumber": {"dataType":"string"},
+            "avatar": {"dataType":"string"},
+            "businessName": {"dataType":"string"},
+            "businessAddress": {"dataType":"string"},
+            "customer": {"ref":"CustomerProfileDto"},
+            "vendor": {"ref":"VendorProfileDto"},
+            "createdAt": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ApiResponse_UserProfileResponse_": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"union","subSchemas":[{"ref":"UserProfileResponse"},{"dataType":"array","array":{"dataType":"refObject","ref":"UserProfileResponse"}},{"dataType":"enum","enums":[null]}],"required":true},
+            "success": {"dataType":"boolean","required":true},
+            "message": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "OnboardIndividualSellerSchema": {
+        "dataType": "refObject",
+        "properties": {
+            "fullName": {"dataType":"string","required":true},
+            "panNumber": {"dataType":"string","required":true},
+            "email": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "OnboardCompanySellerSchema": {
+        "dataType": "refObject",
+        "properties": {
+            "companyName": {"dataType":"string","required":true},
+            "address": {"dataType":"string","required":true},
+            "panNumber": {"dataType":"string","required":true},
+            "documentMediaIds": {"dataType":"array","array":{"dataType":"string"}},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "MediaType": {
         "dataType": "refEnum",
         "enums": ["PRODUCT_IMAGE","LETTER_COVER","AVATAR","CATEGORY_ICON","CATEGORY_BANNER","REQUEST_ATTACHMENT","DOCUMENT"],
@@ -91,77 +200,6 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "data": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":[null]},{"dataType":"array","array":{"dataType":"enum","enums":[null]}},{"dataType":"enum","enums":[null]}],"required":true},
-            "success": {"dataType":"boolean","required":true},
-            "message": {"dataType":"string","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Role": {
-        "dataType": "refEnum",
-        "enums": ["ADMIN","SUPER_ADMIN","VENDOR","CUSTOMER"],
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CustomerProfileDto": {
-        "dataType": "refObject",
-        "properties": {
-            "id": {"dataType":"string","required":true},
-            "shippingAddress": {"dataType":"string"},
-            "city": {"dataType":"string"},
-            "state": {"dataType":"string"},
-            "postalCode": {"dataType":"string"},
-            "country": {"dataType":"string"},
-            "preferences": {"dataType":"string"},
-            "notes": {"dataType":"string"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "VendorProfileDto": {
-        "dataType": "refObject",
-        "properties": {
-            "id": {"dataType":"string","required":true},
-            "businessName": {"dataType":"string","required":true},
-            "businessRegistrationNumber": {"dataType":"string"},
-            "businessAddress": {"dataType":"string"},
-            "city": {"dataType":"string"},
-            "state": {"dataType":"string"},
-            "postalCode": {"dataType":"string"},
-            "country": {"dataType":"string"},
-            "description": {"dataType":"string"},
-            "isVerified": {"dataType":"boolean","required":true},
-            "rating": {"dataType":"double","required":true},
-            "totalReviews": {"dataType":"double","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserProfileResponse": {
-        "dataType": "refObject",
-        "properties": {
-            "id": {"dataType":"string","required":true},
-            "name": {"dataType":"string"},
-            "email": {"dataType":"string"},
-            "role": {"ref":"Role","required":true},
-            "isEmailVerified": {"dataType":"boolean","required":true},
-            "isPhoneVerified": {"dataType":"boolean","required":true},
-            "isVendorVerified": {"dataType":"boolean","required":true},
-            "isActive": {"dataType":"boolean","required":true},
-            "phoneNumber": {"dataType":"string"},
-            "avatar": {"dataType":"string"},
-            "businessName": {"dataType":"string"},
-            "businessAddress": {"dataType":"string"},
-            "customer": {"ref":"CustomerProfileDto"},
-            "vendor": {"ref":"VendorProfileDto"},
-            "createdAt": {"dataType":"datetime","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ApiResponse_UserProfileResponse_": {
-        "dataType": "refObject",
-        "properties": {
-            "data": {"dataType":"union","subSchemas":[{"ref":"UserProfileResponse"},{"dataType":"array","array":{"dataType":"refObject","ref":"UserProfileResponse"}},{"dataType":"enum","enums":[null]}],"required":true},
             "success": {"dataType":"boolean","required":true},
             "message": {"dataType":"string","required":true},
         },
@@ -277,6 +315,26 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "refreshToken": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ToggleModeResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "activeMode": {"ref":"UserMode","required":true},
+            "hasSellerProfile": {"dataType":"boolean","required":true},
+            "isVendorVerified": {"dataType":"boolean","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ApiResponse_ToggleModeResponse_": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"union","subSchemas":[{"ref":"ToggleModeResponse"},{"dataType":"array","array":{"dataType":"refObject","ref":"ToggleModeResponse"}},{"dataType":"enum","enums":[null]}],"required":true},
+            "success": {"dataType":"boolean","required":true},
+            "message": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -479,6 +537,70 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
     const upload = opts?.multer ||  multer({"limits":{"fileSize":8388608}});
 
     
+        const argsVendorController_onboardIndividual: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"OnboardIndividualSellerSchema"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/api/v1/vendor/onboard/individual',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(VendorController)),
+            ...(fetchMiddlewares<RequestHandler>(VendorController.prototype.onboardIndividual)),
+
+            async function VendorController_onboardIndividual(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsVendorController_onboardIndividual, request, response });
+
+                const controller = new VendorController();
+
+              await templateService.apiHandler({
+                methodName: 'onboardIndividual',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsVendorController_onboardCompany: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"OnboardCompanySellerSchema"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/api/v1/vendor/onboard/company',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(VendorController)),
+            ...(fetchMiddlewares<RequestHandler>(VendorController.prototype.onboardCompany)),
+
+            async function VendorController_onboardCompany(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsVendorController_onboardCompany, request, response });
+
+                const controller = new VendorController();
+
+              await templateService.apiHandler({
+                methodName: 'onboardCompany',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsMediaController_upload: Record<string, TsoaRoute.ParameterSchema> = {
                 _req: {"in":"request","name":"_req","required":true,"dataType":"object"},
                 file: {"in":"formData","name":"file","required":true,"dataType":"file"},
@@ -1003,6 +1125,37 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'me',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_toggleMode: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/api/v1/auth/toggle-mode',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.toggleMode)),
+
+            async function AuthController_toggleMode(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_toggleMode, request, response });
+
+                const controller = new AuthController();
+
+              await templateService.apiHandler({
+                methodName: 'toggleMode',
                 controller,
                 response,
                 next,

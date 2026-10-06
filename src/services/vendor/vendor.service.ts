@@ -1,11 +1,24 @@
 import { injectable } from 'tsyringe';
 import { AppDataSource } from '../../config/database.config';
-import { OfferStatus } from '../../constants/appConstant';
+import {
+  OfferStatus,
+  Role,
+  SellerType,
+  UserMode,
+} from '../../constants/appConstant';
+import messages from '../../constants/messages.constants';
 import { OfferEntity } from '../../entities/offer/Offer.entity';
 import { OrderEntity } from '../../entities/order/Order.entity';
 import { ProductEntity } from '../../entities/product/Product.entity';
+import { User } from '../../entities/user/User.entity';
 import { VendorEntity } from '../../entities/vendor/Vendor.entity';
+import { UserProfileResponse } from '../../interfaces/auth.interface';
+import {
+  OnboardCompanySellerSchema,
+  OnboardIndividualSellerSchema,
+} from '../../schemas/vendor.schema';
 import { AppError } from '../../utils/appError.util';
+import { AuthService } from '../auth/auth.service';
 
 export interface UpdateVendorProfileDto {
   businessName?: string;
@@ -20,10 +33,13 @@ export interface UpdateVendorProfileDto {
 
 @injectable()
 export class VendorService {
+  private userRepo = AppDataSource.getRepository(User);
   private vendorRepo = AppDataSource.getRepository(VendorEntity);
   private productRepo = AppDataSource.getRepository(ProductEntity);
   private offerRepo = AppDataSource.getRepository(OfferEntity);
   private orderRepo = AppDataSource.getRepository(OrderEntity);
+
+  constructor(private authService?: AuthService) {}
 
   async getProfile(userId: string): Promise<VendorEntity> {
     const vendor = await this.vendorRepo.findOne({
@@ -111,5 +127,85 @@ export class VendorService {
       rating: Number(vendor.rating),
       totalReviews: vendor.totalReviews,
     };
+  }
+
+  async onboardIndividual(
+    userId: string,
+    data: OnboardIndividualSellerSchema,
+  ): Promise<UserProfileResponse> {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) {
+      throw AppError.notFound(messages.userNotFound);
+    }
+
+    const emailToUse = data.email.trim().toLowerCase();
+    const existingWithEmail = await this.userRepo.findOne({
+      where: { email: emailToUse },
+    });
+    if (existingWithEmail && existingWithEmail.id !== userId) {
+      throw AppError.badRequest(
+        'Email is already registered with another account',
+      );
+    }
+
+    user.name = data.fullName.trim();
+    user.email = emailToUse;
+    user.role = Role.VENDOR;
+    user.activeMode = UserMode.SELLER;
+    await this.userRepo.save(user);
+
+    let vendor = await this.vendorRepo.findOne({ where: { userId } });
+    if (!vendor) {
+      vendor = this.vendorRepo.create({
+        userId,
+        sellerType: SellerType.INDIVIDUAL,
+        businessName: data.fullName.trim(),
+        panNumber: data.panNumber.trim(),
+        isVerified: false,
+      });
+    } else {
+      vendor.sellerType = SellerType.INDIVIDUAL;
+      vendor.businessName = data.fullName.trim();
+      vendor.panNumber = data.panNumber.trim();
+    }
+    await this.vendorRepo.save(vendor);
+
+    return await this.authService!.getProfile(userId);
+  }
+
+  async onboardCompany(
+    userId: string,
+    data: OnboardCompanySellerSchema,
+  ): Promise<UserProfileResponse> {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) {
+      throw AppError.notFound(messages.userNotFound);
+    }
+
+    user.role = Role.VENDOR;
+    user.activeMode = UserMode.SELLER;
+    await this.userRepo.save(user);
+
+    let vendor = await this.vendorRepo.findOne({ where: { userId } });
+    if (!vendor) {
+      vendor = this.vendorRepo.create({
+        userId,
+        sellerType: SellerType.COMPANY,
+        businessName: data.companyName.trim(),
+        businessAddress: data.address.trim(),
+        panNumber: data.panNumber.trim(),
+        documentMediaIds: data.documentMediaIds || [],
+        isVerified: false,
+      });
+    } else {
+      vendor.sellerType = SellerType.COMPANY;
+      vendor.businessName = data.companyName.trim();
+      vendor.businessAddress = data.address.trim();
+      vendor.panNumber = data.panNumber.trim();
+      vendor.documentMediaIds = data.documentMediaIds || [];
+    }
+    await this.vendorRepo.save(vendor);
+
+    return await this.authService!.getProfile(userId);
   }
 }

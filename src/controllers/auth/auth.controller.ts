@@ -19,6 +19,7 @@ import messages from '../../constants/messages.constants';
 import { ApiResponse } from '../../interfaces/apiResponse.interface';
 import {
   AuthResponse,
+  ToggleModeResponse,
   TokenResponse,
   UserProfileResponse,
 } from '../../interfaces/auth.interface';
@@ -182,6 +183,19 @@ export class AuthController extends Controller {
     return {
       data,
       message: messages.dataFetched,
+      success: true,
+    };
+  }
+
+  @Post('/toggle-mode')
+  @Security('jwt')
+  async toggleMode(
+    @Request() req: express.Request,
+  ): Promise<ApiResponse<ToggleModeResponse>> {
+    const data = await this.authService!.toggleMode(req.user!.sub);
+    return {
+      data,
+      message: messages.modeSwitched,
       success: true,
     };
   }

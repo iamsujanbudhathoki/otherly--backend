@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Role } from '../../constants/appConstant';
+import { Role, UserMode } from '../../constants/appConstant';
 
 @ObjectType({ description: 'User profile representation for all roles' })
 export class UserProfileType {
@@ -14,6 +14,12 @@ export class UserProfileType {
 
   @Field(() => Role)
   role: Role;
+
+  @Field(() => UserMode)
+  activeMode: UserMode;
+
+  @Field({ defaultValue: false })
+  hasSellerProfile: boolean;
 
   @Field()
   isEmailVerified: boolean;

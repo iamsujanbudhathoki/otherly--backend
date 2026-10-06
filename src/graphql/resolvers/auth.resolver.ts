@@ -1,5 +1,6 @@
 import { injectable } from 'tsyringe';
 import { Authorized, Ctx, Query, Resolver } from 'type-graphql';
+import { UserMode } from '../../constants/appConstant';
 import { AdminAuthService } from '../../services/admin/auth.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { GraphQLContext } from '../context';
@@ -30,6 +31,8 @@ export class AuthResolver {
         role: admin.role,
         isEmailVerified: true,
         isPhoneVerified: false,
+        activeMode: UserMode.CUSTOMER,
+        hasSellerProfile: false,
         isVendorVerified: false,
         isActive: admin.isActive,
         createdAt: admin.createdAt,

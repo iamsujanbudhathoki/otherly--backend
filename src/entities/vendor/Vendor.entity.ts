@@ -8,6 +8,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { CommonEntity } from '../common/common.entity';
+import { SellerType } from '../../constants/appConstant';
 import type { OfferEntity } from '../offer/Offer.entity';
 import type { OrderEntity } from '../order/Order.entity';
 import type { ProductEntity } from '../product/Product.entity';
@@ -29,9 +30,29 @@ export class VendorEntity extends CommonEntity {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
+  @Field(() => SellerType)
+  @Column({
+    type: 'enum',
+    enum: SellerType,
+    default: SellerType.INDIVIDUAL,
+  })
+  sellerType: SellerType;
+
   @Field()
   @Column({ name: 'business_name', length: 200 })
   businessName: string;
+
+  @Field({ nullable: true })
+  @Column({ name: 'pan_number', nullable: true, length: 50 })
+  panNumber?: string;
+
+  @Field(() => [String], { nullable: true })
+  @Column({
+    name: 'document_media_ids',
+    type: 'simple-array',
+    nullable: true,
+  })
+  documentMediaIds?: string[];
 
   @Field({ nullable: true })
   @Column({

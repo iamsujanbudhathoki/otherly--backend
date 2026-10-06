@@ -1,4 +1,4 @@
-import { Role } from '../constants/appConstant';
+import { Role, SellerType, UserMode } from '../constants/appConstant';
 
 export interface CustomerProfileDto {
   id: string;
@@ -13,7 +13,10 @@ export interface CustomerProfileDto {
 
 export interface VendorProfileDto {
   id: string;
+  sellerType?: SellerType;
   businessName: string;
+  panNumber?: string;
+  documentMediaIds?: string[];
   businessRegistrationNumber?: string;
   businessAddress?: string;
   city?: string;
@@ -31,6 +34,8 @@ export interface UserProfileResponse {
   name?: string;
   email?: string;
   role: Role;
+  activeMode: UserMode;
+  hasSellerProfile: boolean;
   isEmailVerified: boolean;
   isPhoneVerified: boolean;
   isVendorVerified: boolean;
@@ -42,6 +47,12 @@ export interface UserProfileResponse {
   customer?: CustomerProfileDto;
   vendor?: VendorProfileDto;
   createdAt: Date;
+}
+
+export interface ToggleModeResponse {
+  activeMode: UserMode;
+  hasSellerProfile: boolean;
+  isVendorVerified: boolean;
 }
 
 export interface AuthResponse {

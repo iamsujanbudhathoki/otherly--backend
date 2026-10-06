@@ -7,7 +7,7 @@ import {
   Index,
   OneToOne,
 } from 'typeorm';
-import { Role } from '../../constants/appConstant';
+import { Role, UserMode } from '../../constants/appConstant';
 import BcryptService from '../../utils/bcrypt.util';
 import { CommonEntity } from '../common/common.entity';
 import type { CustomerEntity } from '../customer/Customer.entity';
@@ -38,6 +38,14 @@ export class User extends CommonEntity {
     default: Role.CUSTOMER,
   })
   role: Role;
+
+  @Field(() => UserMode)
+  @Column({
+    type: 'enum',
+    enum: UserMode,
+    default: UserMode.CUSTOMER,
+  })
+  activeMode: UserMode;
 
   @Field()
   @Column({ type: 'boolean', default: false })

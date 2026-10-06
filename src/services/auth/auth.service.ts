@@ -1,7 +1,7 @@
 import { autoInjectable } from 'tsyringe';
 import { AppDataSource } from '../../config/database.config';
 import { DotenvConfig } from '../../config/env.config';
-import { Role, TokenEnum } from '../../constants/appConstant';
+import { Role, TokenEnum, UserMode } from '../../constants/appConstant';
 import messages from '../../constants/messages.constants';
 import { Admin } from '../../entities/admin/Admin.entity';
 import { CustomerEntity } from '../../entities/customer/Customer.entity';
@@ -10,6 +10,7 @@ import { User } from '../../entities/user/User.entity';
 import { VendorEntity } from '../../entities/vendor/Vendor.entity';
 import {
   AuthResponse,
+  ToggleModeResponse,
   TokenResponse,
   UserProfileResponse,
 } from '../../interfaces/auth.interface';
@@ -43,12 +44,12 @@ export class AuthService {
     let customer = user.customer;
     let vendor = user.vendor;
 
-    if (!customer && user.role === Role.CUSTOMER) {
+    if (!customer) {
       customer =
         (await this.customerRepo.findOne({ where: { userId: user.id } })) ??
         undefined;
     }
-    if (!vendor && user.role === Role.VENDOR) {
+    if (!vendor) {
       vendor =
         (await this.vendorRepo.findOne({ where: { userId: user.id } })) ??
         undefined;
@@ -59,6 +60,8 @@ export class AuthService {
       name: user.name,
       email: user.email,
       role: user.role,
+      activeMode: user.activeMode || UserMode.CUSTOMER,
+      hasSellerProfile: !!vendor,
       isEmailVerified: user.isEmailVerified,
       isPhoneVerified: user.isPhoneVerified,
       isVendorVerified: vendor ? vendor.isVerified : user.isVendorVerified,
@@ -82,7 +85,10 @@ export class AuthService {
       vendor: vendor
         ? {
             id: vendor.id,
+            sellerType: vendor.sellerType,
             businessName: vendor.businessName,
+            panNumber: vendor.panNumber,
+            documentMediaIds: vendor.documentMediaIds,
             businessRegistrationNumber: vendor.businessRegistrationNumber,
             businessAddress: vendor.businessAddress,
             city: vendor.city,
@@ -797,6 +803,29 @@ export class AuthService {
       user: await this.sanitizeUser(user),
       accessToken,
       refreshToken,
+    };
+  }
+
+  async toggleMode(userId: string): Promise<ToggleModeResponse> {
+    const user = await this.userRepo.findOne({
+      where: { id: userId },
+      relations: ['vendor'],
+    });
+    if (!user) {
+      throw AppError.notFound(messages.userNotFound);
+    }
+
+    const newMode =
+      user.activeMode === UserMode.SELLER ? UserMode.CUSTOMER : UserMode.SELLER;
+    user.activeMode = newMode;
+    await this.userRepo.save(user);
+
+    const hasSellerProfile = !!user.vendor;
+
+    return {
+      activeMode: user.activeMode,
+      hasSellerProfile,
+      isVendorVerified: user.vendor ? user.vendor.isVerified : false,
     };
   }
 }
