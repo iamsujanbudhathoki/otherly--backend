@@ -29,6 +29,7 @@ export class AuthResolver {
         email: admin.email,
         role: admin.role,
         isEmailVerified: true,
+        isPhoneVerified: false,
         isVendorVerified: false,
         isActive: admin.isActive,
         createdAt: admin.createdAt,

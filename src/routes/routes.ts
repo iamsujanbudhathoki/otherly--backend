@@ -140,10 +140,11 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"string","required":true},
-            "name": {"dataType":"string","required":true},
-            "email": {"dataType":"string","required":true},
+            "name": {"dataType":"string"},
+            "email": {"dataType":"string"},
             "role": {"ref":"Role","required":true},
             "isEmailVerified": {"dataType":"boolean","required":true},
+            "isPhoneVerified": {"dataType":"boolean","required":true},
             "isVendorVerified": {"dataType":"boolean","required":true},
             "isActive": {"dataType":"boolean","required":true},
             "phoneNumber": {"dataType":"string"},
@@ -197,6 +198,24 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ApiResponse__cooldownSeconds-number--otp-string__": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"otp":{"dataType":"string","required":true},"cooldownSeconds":{"dataType":"double","required":true}}},{"dataType":"array","array":{"dataType":"nestedObjectLiteral","nestedProperties":{"otp":{"dataType":"string","required":true},"cooldownSeconds":{"dataType":"double","required":true}}}},{"dataType":"enum","enums":[null]}],"required":true},
+            "success": {"dataType":"boolean","required":true},
+            "message": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SendOtpSchema": {
+        "dataType": "refObject",
+        "properties": {
+            "phoneNumber": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AuthResponse": {
         "dataType": "refObject",
         "properties": {
@@ -213,6 +232,15 @@ const models: TsoaRoute.Models = {
             "data": {"dataType":"union","subSchemas":[{"ref":"AuthResponse"},{"dataType":"array","array":{"dataType":"refObject","ref":"AuthResponse"}},{"dataType":"enum","enums":[null]}],"required":true},
             "success": {"dataType":"boolean","required":true},
             "message": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "VerifyOtpSchema": {
+        "dataType": "refObject",
+        "properties": {
+            "phoneNumber": {"dataType":"string","required":true},
+            "otp": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -248,7 +276,7 @@ const models: TsoaRoute.Models = {
     "RefreshTokenSchema": {
         "dataType": "refObject",
         "properties": {
-            "refreshToken": {"dataType":"string","required":true},
+            "refreshToken": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -801,8 +829,70 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_sendOtp: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"SendOtpSchema"},
+        };
+        app.post('/api/v1/auth/otp/send',
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.sendOtp)),
+
+            async function AuthController_sendOtp(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_sendOtp, request, response });
+
+                const controller = new AuthController();
+
+              await templateService.apiHandler({
+                methodName: 'sendOtp',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_verifyOtp: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"VerifyOtpSchema"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/api/v1/auth/otp/verify',
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.verifyOtp)),
+
+            async function AuthController_verifyOtp(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_verifyOtp, request, response });
+
+                const controller = new AuthController();
+
+              await templateService.apiHandler({
+                methodName: 'verifyOtp',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_login: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"ref":"LoginSchema"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.post('/api/v1/auth/login',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
@@ -833,6 +923,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_refresh: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"ref":"RefreshTokenSchema"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.post('/api/v1/auth/refresh',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),

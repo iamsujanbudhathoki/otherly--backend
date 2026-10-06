@@ -6,17 +6,20 @@ export class UserProfileType {
   @Field(() => ID)
   id: string;
 
-  @Field()
-  name: string;
+  @Field({ nullable: true })
+  name?: string;
 
-  @Field()
-  email: string;
+  @Field({ nullable: true })
+  email?: string;
 
   @Field(() => Role)
   role: Role;
 
   @Field()
   isEmailVerified: boolean;
+
+  @Field({ defaultValue: false })
+  isPhoneVerified: boolean;
 
   @Field({ defaultValue: false })
   isVendorVerified: boolean;

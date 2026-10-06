@@ -31,10 +31,14 @@ import {
   RegisterSchema,
   ResendVerificationSchema,
   ResetPasswordSchema,
+  SendOtpSchema,
   UpdateProfileSchema,
   VerifyEmailSchema,
+  VerifyOtpSchema,
 } from '../../schemas/auth.schema';
 import { AuthService } from '../../services/auth/auth.service';
+import { AppError } from '../../utils/appError.util';
+import { CookieUtil } from '../../utils/cookie.util';
 
 @Route('auth')
 @Tags('Authentication')
@@ -85,10 +89,46 @@ export class AuthController extends Controller {
     };
   }
 
+  @Post('/otp/send')
+  @Middlewares(RequestValidator.validate(SendOtpSchema))
+  async sendOtp(
+    @Body() body: SendOtpSchema,
+  ): Promise<ApiResponse<{ cooldownSeconds: number; otp: string }>> {
+    const data = await this.authService!.sendOtp(body);
+    return {
+      data,
+      message: messages.otpSent,
+      success: true,
+    };
+  }
+
+  @Post('/otp/verify')
+  @Middlewares(RequestValidator.validate(VerifyOtpSchema))
+  async verifyOtp(
+    @Body() body: VerifyOtpSchema,
+    @Request() req: express.Request,
+  ): Promise<ApiResponse<AuthResponse>> {
+    const data = await this.authService!.verifyOtp(body);
+    if (req.res) {
+      CookieUtil.setAuthCookies(req.res, data.accessToken, data.refreshToken);
+    }
+    return {
+      data,
+      message: messages.otpVerified,
+      success: true,
+    };
+  }
+
   @Post('/login')
   @Middlewares(RequestValidator.validate(LoginSchema))
-  async login(@Body() body: LoginSchema): Promise<ApiResponse<AuthResponse>> {
+  async login(
+    @Body() body: LoginSchema,
+    @Request() req: express.Request,
+  ): Promise<ApiResponse<AuthResponse>> {
     const data = await this.authService!.login(body);
+    if (req.res) {
+      CookieUtil.setAuthCookies(req.res, data.accessToken, data.refreshToken);
+    }
     return {
       data,
       message: messages.validLogin,
@@ -100,8 +140,18 @@ export class AuthController extends Controller {
   @Middlewares(RequestValidator.validate(RefreshTokenSchema))
   async refresh(
     @Body() body: RefreshTokenSchema,
+    @Request() req: express.Request,
   ): Promise<ApiResponse<TokenResponse>> {
-    const data = await this.authService!.refreshToken(body.refreshToken);
+    const token =
+      body.refreshToken ||
+      (req.cookies && (req.cookies.refreshToken as string));
+    if (!token) {
+      throw AppError.unAuthorized('Refresh token is required');
+    }
+    const data = await this.authService!.refreshToken(token);
+    if (req.res) {
+      CookieUtil.setAuthCookies(req.res, data.accessToken, data.refreshToken);
+    }
     return {
       data,
       message: messages.tokenRefreshed,
@@ -113,6 +163,9 @@ export class AuthController extends Controller {
   @Security('jwt')
   async logout(@Request() req: express.Request): Promise<ApiResponse<null>> {
     await this.authService!.logout(req.user!.sub);
+    if (req.res) {
+      CookieUtil.clearAuthCookies(req.res);
+    }
     return {
       data: null,
       message: messages.logoutSuccess,

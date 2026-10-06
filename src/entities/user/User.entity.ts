@@ -19,17 +19,17 @@ import type { VendorEntity } from '../vendor/Vendor.entity';
 })
 @Entity('users')
 export class User extends CommonEntity {
-  @Field()
-  @Column({ length: 150 })
-  name: string;
+  @Field({ nullable: true })
+  @Column({ length: 150, nullable: true })
+  name?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Index({ unique: true })
-  @Column({ length: 255, unique: true })
-  email: string;
+  @Column({ length: 255, unique: true, nullable: true })
+  email?: string;
 
-  @Column({ select: false })
-  password: string;
+  @Column({ select: false, nullable: true })
+  password?: string;
 
   @Field(() => Role)
   @Column({
@@ -44,11 +44,16 @@ export class User extends CommonEntity {
   isEmailVerified: boolean;
 
   @Field()
+  @Column({ type: 'boolean', default: false })
+  isPhoneVerified: boolean;
+
+  @Field()
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
   @Field({ nullable: true })
-  @Column({ nullable: true, length: 25 })
+  @Index({ unique: true })
+  @Column({ nullable: true, length: 25, unique: true })
   phoneNumber?: string;
 
   @Field({ nullable: true })

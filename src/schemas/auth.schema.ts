@@ -60,9 +60,9 @@ export class ResendVerificationSchema {
 }
 
 export class RefreshTokenSchema {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty({ message: 'Refresh token is required' })
-  refreshToken!: string;
+  refreshToken?: string;
 }
 
 export class ChangePasswordSchema {
@@ -122,4 +122,20 @@ export class AdminUpdateUserStatusSchema {
 export class AdminVerifyVendorSchema {
   @IsBoolean()
   isVerified!: boolean;
+}
+
+export class SendOtpSchema {
+  @IsString()
+  @IsNotEmpty({ message: 'Phone number is required' })
+  phoneNumber!: string;
+}
+
+export class VerifyOtpSchema {
+  @IsString()
+  @IsNotEmpty({ message: 'Phone number is required' })
+  phoneNumber!: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'OTP is required' })
+  otp!: string;
 }

@@ -14,17 +14,21 @@ export const buildGraphQLContext = async ({
   req: Request;
   res: Response;
 }): Promise<GraphQLContext> => {
-  const authHeader = req.headers.authorization;
-  let user: JwtPayload | undefined;
+  let token: string | undefined;
 
+  const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
-    const token = authHeader.slice(7).trim();
-    if (token) {
-      try {
-        user = JwtUtil.verify(token);
-      } catch {
-        // Token is invalid/expired; user remains unauthenticated
-      }
+    token = authHeader.slice(7).trim();
+  } else if (req.cookies && req.cookies.accessToken) {
+    token = req.cookies.accessToken;
+  }
+
+  let user: JwtPayload | undefined;
+  if (token) {
+    try {
+      user = JwtUtil.verify(token);
+    } catch {
+      // Token is invalid/expired; user remains unauthenticated
     }
   }
 

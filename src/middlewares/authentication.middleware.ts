@@ -14,12 +14,15 @@ export async function expressAuthentication(
     throw AppError.unAuthorized(messages.unAuthorized);
   }
 
+  let token: string | undefined;
+
   const authHeader = request.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw AppError.unAuthorized(messages.invalidToken);
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.slice(7).trim();
+  } else if (request.cookies && request.cookies.accessToken) {
+    token = request.cookies.accessToken;
   }
 
-  const token = authHeader.slice(7).trim();
   if (!token) {
     throw AppError.unAuthorized(messages.invalidToken);
   }

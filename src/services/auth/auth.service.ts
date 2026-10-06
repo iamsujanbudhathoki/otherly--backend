@@ -18,8 +18,11 @@ import {
   LoginSchema,
   RegisterSchema,
   ResetPasswordSchema,
+  SendOtpSchema,
   UpdateProfileSchema,
+  VerifyOtpSchema,
 } from '../../schemas/auth.schema';
+import { OtpService } from '../otp/otp.service';
 import { AppError } from '../../utils/appError.util';
 import BcryptService from '../../utils/bcrypt.util';
 import emailUtil from '../../utils/email.util';
@@ -33,6 +36,8 @@ export class AuthService {
   private vendorRepo = AppDataSource.getRepository(VendorEntity);
   private adminRepo = AppDataSource.getRepository(Admin);
   private tokenRepo = AppDataSource.getRepository(Token);
+
+  constructor(private otpService?: OtpService) {}
 
   private async sanitizeUser(user: User): Promise<UserProfileResponse> {
     let customer = user.customer;
@@ -55,6 +60,7 @@ export class AuthService {
       email: user.email,
       role: user.role,
       isEmailVerified: user.isEmailVerified,
+      isPhoneVerified: user.isPhoneVerified,
       isVendorVerified: vendor ? vendor.isVerified : user.isVendorVerified,
       isActive: user.isActive,
       phoneNumber: user.phoneNumber,
@@ -164,10 +170,12 @@ export class AuthService {
 
     // Send verification email
     const verificationUrl = `${DotenvConfig.FRONTEND_BASE_URL}/verify-email?token=${verificationToken}`;
-    await emailUtil.sendVerificationEmail(savedUser.email, {
-      name: savedUser.name,
-      verificationUrl,
-    });
+    if (savedUser.email) {
+      await emailUtil.sendVerificationEmail(savedUser.email, {
+        name: savedUser.name || 'User',
+        verificationUrl,
+      });
+    }
 
     return await this.sanitizeUser(savedUser);
   }
@@ -249,10 +257,12 @@ export class AuthService {
     }
 
     const verificationUrl = `${DotenvConfig.FRONTEND_BASE_URL}/verify-email?token=${verificationToken}`;
-    await emailUtil.sendVerificationEmail(user.email, {
-      name: user.name,
-      verificationUrl,
-    });
+    if (user.email) {
+      await emailUtil.sendVerificationEmail(user.email, {
+        name: user.name || 'User',
+        verificationUrl,
+      });
+    }
   }
 
   async login(data: LoginSchema): Promise<AuthResponse> {
@@ -273,6 +283,10 @@ export class AuthService {
 
     if (!user.isActive) {
       throw AppError.forbidden(messages.unAuthorized);
+    }
+
+    if (!user.password) {
+      throw AppError.unAuthorized(messages.invalidAuth);
     }
 
     const isPasswordValid = await BcryptService.compare(
@@ -409,6 +423,12 @@ export class AuthService {
       throw AppError.notFound(messages.userNotFound);
     }
 
+    if (!user.password) {
+      throw AppError.badRequest(
+        'No password set on this account. Please use reset password or mobile login.',
+      );
+    }
+
     const isOldValid = await BcryptService.compare(
       data.oldPassword,
       user.password,
@@ -433,7 +453,7 @@ export class AuthService {
       where: { email, isActive: true },
     });
 
-    if (!user) {
+    if (!user || !user.email) {
       return;
     }
 
@@ -468,7 +488,7 @@ export class AuthService {
 
     const resetUrl = `${DotenvConfig.FRONTEND_BASE_URL}/reset-password?token=${resetToken}`;
     await emailUtil.sendPasswordResetEmail(user.email, {
-      name: user.name,
+      name: user.name || 'User',
       resetUrl,
     });
   }
@@ -685,5 +705,98 @@ export class AuthService {
     }
 
     return await this.sanitizeUser(saved);
+  }
+
+  async sendOtp(data: SendOtpSchema): Promise<{
+    success: boolean;
+    cooldownSeconds: number;
+    otp: string;
+  }> {
+    return await this.otpService!.sendOtp(data.phoneNumber);
+  }
+
+  async verifyOtp(data: VerifyOtpSchema): Promise<AuthResponse> {
+    const cleanPhone = this.otpService!.normalizePhoneNumber(data.phoneNumber);
+    await this.otpService!.verifyOtp(cleanPhone, data.otp);
+
+    let user = await this.userRepo
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.customer', 'customer')
+      .leftJoinAndSelect('user.vendor', 'vendor')
+      .where('user.phoneNumber = :phone', { phone: cleanPhone })
+      .getOne();
+
+    if (!user) {
+      // Automatic Just-In-Time signup for new mobile user
+      const lastDigits = cleanPhone.slice(-4);
+      user = this.userRepo.create({
+        phoneNumber: cleanPhone,
+        name: `User-${lastDigits}`,
+        role: Role.CUSTOMER,
+        isActive: true,
+        isPhoneVerified: true,
+        isEmailVerified: false,
+      });
+      user = await this.userRepo.save(user);
+
+      // Create linked customer entity
+      const customer = this.customerRepo.create({
+        userId: user.id,
+      });
+      await this.customerRepo.save(customer);
+      user.customer = customer;
+    } else {
+      if (!user.isActive) {
+        throw AppError.forbidden(messages.unAuthorized);
+      }
+      if (!user.isPhoneVerified) {
+        user.isPhoneVerified = true;
+        await this.userRepo.save(user);
+      }
+    }
+
+    const tokenPayload = {
+      sub: user.id,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      role: user.role,
+    };
+
+    const accessToken = JwtUtil.sign(
+      tokenPayload,
+      DotenvConfig.JWT_ACCESS_EXPIRES_SECONDS,
+    );
+    const refreshToken = JwtUtil.sign(
+      tokenPayload,
+      DotenvConfig.JWT_REFRESH_EXPIRES_SECONDS,
+    );
+
+    // Save refresh token to tokenRepo
+    const existingToken = await this.tokenRepo.findOne({
+      where: {
+        ownerId: user.id,
+        ownerType: TokenOwnerType.USER,
+        type: TokenEnum.REFRESH_TOKEN,
+      },
+    });
+
+    if (existingToken) {
+      existingToken.token = refreshToken;
+      await this.tokenRepo.save(existingToken);
+    } else {
+      const newToken = this.tokenRepo.create({
+        ownerId: user.id,
+        ownerType: TokenOwnerType.USER,
+        type: TokenEnum.REFRESH_TOKEN,
+        token: refreshToken,
+      });
+      await this.tokenRepo.save(newToken);
+    }
+
+    return {
+      user: await this.sanitizeUser(user),
+      accessToken,
+      refreshToken,
+    };
   }
 }

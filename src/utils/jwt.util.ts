@@ -7,7 +7,8 @@ import { AppError } from './appError.util';
 
 export interface JwtPayload {
   sub: string;
-  email: string;
+  email?: string;
+  phoneNumber?: string;
   role: Role;
   permissions?: AdminPermission[];
   iat: number;

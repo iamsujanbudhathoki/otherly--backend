@@ -41,6 +41,8 @@ const messages = {
   unAuthorized: 'You are not authorized to perform this action',
   mediaUploaded: 'Media Uploaded Successfully',
   actionCompleted: 'Action completed successfully',
+  otpSent: 'Verification code sent to your mobile number successfully',
+  otpVerified: 'Mobile number verified and logged in successfully',
 };
 
 export default messages;

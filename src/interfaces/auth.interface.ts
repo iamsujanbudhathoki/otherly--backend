@@ -28,10 +28,11 @@ export interface VendorProfileDto {
 
 export interface UserProfileResponse {
   id: string;
-  name: string;
-  email: string;
+  name?: string;
+  email?: string;
   role: Role;
   isEmailVerified: boolean;
+  isPhoneVerified: boolean;
   isVendorVerified: boolean;
   isActive: boolean;
   phoneNumber?: string;

@@ -293,6 +293,9 @@
 					"isEmailVerified": {
 						"type": "boolean"
 					},
+					"isPhoneVerified": {
+						"type": "boolean"
+					},
 					"isVendorVerified": {
 						"type": "boolean"
 					},
@@ -324,10 +327,9 @@
 				},
 				"required": [
 					"id",
-					"name",
-					"email",
 					"role",
 					"isEmailVerified",
+					"isPhoneVerified",
 					"isVendorVerified",
 					"isActive",
 					"createdAt"
@@ -422,6 +424,75 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ApiResponse__cooldownSeconds-number--otp-string__": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"properties": {
+									"otp": {
+										"type": "string"
+									},
+									"cooldownSeconds": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"otp",
+									"cooldownSeconds"
+								],
+								"type": "object"
+							},
+							{
+								"items": {
+									"properties": {
+										"otp": {
+											"type": "string"
+										},
+										"cooldownSeconds": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"otp",
+										"cooldownSeconds"
+									],
+									"type": "object"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SendOtpSchema": {
+				"properties": {
+					"phoneNumber": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"phoneNumber"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"AuthResponse": {
 				"properties": {
 					"user": {
@@ -469,6 +540,22 @@
 					"data",
 					"success",
 					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"VerifyOtpSchema": {
+				"properties": {
+					"phoneNumber": {
+						"type": "string"
+					},
+					"otp": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"phoneNumber",
+					"otp"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -542,9 +629,6 @@
 						"type": "string"
 					}
 				},
-				"required": [
-					"refreshToken"
-				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -1560,6 +1644,70 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/ResendVerificationSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/otp/send": {
+			"post": {
+				"operationId": "SendOtp",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse__cooldownSeconds-number--otp-string__"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SendOtpSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/otp/verify": {
+			"post": {
+				"operationId": "VerifyOtp",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_AuthResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/VerifyOtpSchema"
 							}
 						}
 					}
