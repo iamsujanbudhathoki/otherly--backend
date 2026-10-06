@@ -7,633 +7,17 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"ProductEntity": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"deletedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"name": {
-						"type": "string"
-					},
-					"slug": {
-						"type": "string"
-					},
-					"tag": {
-						"type": "string"
-					},
-					"status": {
-						"type": "string"
-					},
-					"logo": {
-						"type": "string"
-					},
-					"url": {
-						"type": "string"
-					},
-					"body": {
-						"type": "string"
-					},
-					"isActive": {
-						"type": "boolean"
-					}
-				},
-				"required": [
-					"id",
-					"createdAt",
-					"deletedAt",
-					"name",
-					"slug",
-					"tag",
-					"status",
-					"logo",
-					"url",
-					"body",
-					"isActive"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiResponse_ProductEntity-Array_": {
-				"properties": {
-					"data": {
-						"anyOf": [
-							{
-								"items": {
-									"$ref": "#/components/schemas/ProductEntity"
-								},
-								"type": "array"
-							},
-							{
-								"items": {
-									"items": {
-										"$ref": "#/components/schemas/ProductEntity"
-									},
-									"type": "array"
-								},
-								"type": "array"
-							}
-						],
-						"nullable": true
-					},
-					"success": {
-						"type": "boolean"
-					},
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"data",
-					"success",
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiResponse_ProductEntity_": {
-				"properties": {
-					"data": {
-						"anyOf": [
-							{
-								"$ref": "#/components/schemas/ProductEntity"
-							},
-							{
-								"items": {
-									"$ref": "#/components/schemas/ProductEntity"
-								},
-								"type": "array"
-							}
-						],
-						"nullable": true
-					},
-					"success": {
-						"type": "boolean"
-					},
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"data",
-					"success",
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CreateProductSchema": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"slug": {
-						"type": "string"
-					},
-					"tag": {
-						"type": "string"
-					},
-					"status": {
-						"type": "string"
-					},
-					"logo": {
-						"type": "string"
-					},
-					"url": {
-						"type": "string"
-					},
-					"body": {
-						"type": "string"
-					},
-					"isActive": {
-						"type": "boolean"
-					}
-				},
-				"required": [
-					"name",
-					"slug",
-					"tag",
-					"status",
-					"logo",
-					"url",
-					"body"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"UpdateProductSchema": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"tag": {
-						"type": "string"
-					},
-					"status": {
-						"type": "string"
-					},
-					"logo": {
-						"type": "string"
-					},
-					"url": {
-						"type": "string"
-					},
-					"body": {
-						"type": "string"
-					},
-					"isActive": {
-						"type": "boolean"
-					}
-				},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiResponse_null_": {
-				"properties": {
-					"data": {
-						"items": {
-							"type": "number",
-							"enum": [
-								null
-							],
-							"nullable": true
-						},
-						"type": "array",
-						"nullable": true
-					},
-					"success": {
-						"type": "boolean"
-					},
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"data",
-					"success",
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"MediaType": {
 				"enum": [
 					"PRODUCT_IMAGE",
-					"LETTER_COVER"
+					"LETTER_COVER",
+					"AVATAR",
+					"CATEGORY_ICON",
+					"CATEGORY_BANNER",
+					"REQUEST_ATTACHMENT",
+					"DOCUMENT"
 				],
 				"type": "string"
-			},
-			"Media": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"deletedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"mimeType": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"fileSize": {
-						"type": "string"
-					},
-					"mediaType": {
-						"$ref": "#/components/schemas/MediaType"
-					},
-					"path": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id",
-					"createdAt",
-					"deletedAt",
-					"mimeType",
-					"name",
-					"fileSize",
-					"mediaType",
-					"path"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"LetterKind": {
-				"enum": [
-					"Letter",
-					"Note",
-					"Study"
-				],
-				"type": "string"
-			},
-			"LetterSection": {
-				"properties": {
-					"heading": {
-						"type": "string"
-					},
-					"paragraphs": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"paragraphs"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"LetterEntity": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"deletedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"slug": {
-						"type": "string"
-					},
-					"number": {
-						"type": "string"
-					},
-					"kind": {
-						"$ref": "#/components/schemas/LetterKind"
-					},
-					"date": {
-						"type": "string"
-					},
-					"readTime": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"body": {
-						"type": "string"
-					},
-					"image": {
-						"type": "string"
-					},
-					"content": {
-						"items": {
-							"$ref": "#/components/schemas/LetterSection"
-						},
-						"type": "array"
-					},
-					"author": {
-						"type": "string"
-					},
-					"authorTitle": {
-						"type": "string"
-					},
-					"isPublished": {
-						"type": "boolean"
-					}
-				},
-				"required": [
-					"id",
-					"createdAt",
-					"deletedAt",
-					"slug",
-					"number",
-					"kind",
-					"date",
-					"readTime",
-					"title",
-					"body",
-					"image",
-					"content",
-					"author",
-					"authorTitle",
-					"isPublished"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiResponse_LetterEntity_": {
-				"properties": {
-					"data": {
-						"anyOf": [
-							{
-								"$ref": "#/components/schemas/LetterEntity"
-							},
-							{
-								"items": {
-									"$ref": "#/components/schemas/LetterEntity"
-								},
-								"type": "array"
-							}
-						],
-						"nullable": true
-					},
-					"success": {
-						"type": "boolean"
-					},
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"data",
-					"success",
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"LetterSectionSchema": {
-				"properties": {
-					"heading": {
-						"type": "string"
-					},
-					"paragraphs": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"paragraphs"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CreateLetterSchema": {
-				"properties": {
-					"slug": {
-						"type": "string"
-					},
-					"number": {
-						"type": "string"
-					},
-					"kind": {
-						"$ref": "#/components/schemas/LetterKind"
-					},
-					"date": {
-						"type": "string"
-					},
-					"readTime": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"body": {
-						"type": "string"
-					},
-					"image": {
-						"type": "string"
-					},
-					"content": {
-						"items": {
-							"$ref": "#/components/schemas/LetterSectionSchema"
-						},
-						"type": "array"
-					},
-					"author": {
-						"type": "string"
-					},
-					"authorTitle": {
-						"type": "string"
-					},
-					"isPublished": {
-						"type": "boolean"
-					}
-				},
-				"required": [
-					"slug",
-					"number",
-					"kind",
-					"date",
-					"readTime",
-					"title",
-					"body",
-					"image",
-					"content",
-					"author",
-					"authorTitle"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"UpdateLetterSchema": {
-				"properties": {
-					"number": {
-						"type": "string"
-					},
-					"kind": {
-						"$ref": "#/components/schemas/LetterKind"
-					},
-					"date": {
-						"type": "string"
-					},
-					"readTime": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"body": {
-						"type": "string"
-					},
-					"image": {
-						"type": "string"
-					},
-					"content": {
-						"items": {
-							"$ref": "#/components/schemas/LetterSectionSchema"
-						},
-						"type": "array"
-					},
-					"author": {
-						"type": "string"
-					},
-					"authorTitle": {
-						"type": "string"
-					},
-					"isPublished": {
-						"type": "boolean"
-					}
-				},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"MailType": {
-				"enum": [
-					"CONTACT_ADMIN_NOTIFICATION",
-					"CONTACT_USER_ACKNOWLEDGEMENT"
-				],
-				"type": "string"
-			},
-			"EmailDeliveryStatus": {
-				"enum": [
-					"PENDING",
-					"SENT",
-					"FAILED",
-					"SKIPPED"
-				],
-				"type": "string"
-			},
-			"Record_string.any_": {
-				"properties": {},
-				"additionalProperties": {},
-				"type": "object",
-				"description": "Construct a type with a set of properties K of type T"
-			},
-			"EmailLogEntity": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"deletedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"recipient": {
-						"type": "string"
-					},
-					"replyTo": {
-						"type": "string"
-					},
-					"subject": {
-						"type": "string"
-					},
-					"mailType": {
-						"$ref": "#/components/schemas/MailType"
-					},
-					"htmlBody": {
-						"type": "string"
-					},
-					"textBody": {
-						"type": "string"
-					},
-					"status": {
-						"$ref": "#/components/schemas/EmailDeliveryStatus"
-					},
-					"messageId": {
-						"type": "string"
-					},
-					"errorMessage": {
-						"type": "string"
-					},
-					"metadata": {
-						"$ref": "#/components/schemas/Record_string.any_"
-					},
-					"sentAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"createdAt",
-					"deletedAt",
-					"recipient",
-					"subject",
-					"mailType",
-					"htmlBody",
-					"textBody",
-					"status"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ApiResponse_EmailLogEntity_": {
-				"properties": {
-					"data": {
-						"anyOf": [
-							{
-								"$ref": "#/components/schemas/EmailLogEntity"
-							},
-							{
-								"items": {
-									"$ref": "#/components/schemas/EmailLogEntity"
-								},
-								"type": "array"
-							}
-						],
-						"nullable": true
-					},
-					"success": {
-						"type": "boolean"
-					},
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"data",
-					"success",
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": false
 			},
 			"ContactTopic": {
 				"enum": [
@@ -771,12 +155,534 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ApiResponse_null_": {
+				"properties": {
+					"data": {
+						"items": {
+							"type": "number",
+							"enum": [
+								null
+							],
+							"nullable": true
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Role": {
 				"enum": [
 					"ADMIN",
-					"SUPER_ADMIN"
+					"SUPER_ADMIN",
+					"VENDOR",
+					"CUSTOMER"
 				],
 				"type": "string"
+			},
+			"CustomerProfileDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"shippingAddress": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"state": {
+						"type": "string"
+					},
+					"postalCode": {
+						"type": "string"
+					},
+					"country": {
+						"type": "string"
+					},
+					"preferences": {
+						"type": "string"
+					},
+					"notes": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"VendorProfileDto": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"businessName": {
+						"type": "string"
+					},
+					"businessRegistrationNumber": {
+						"type": "string"
+					},
+					"businessAddress": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"state": {
+						"type": "string"
+					},
+					"postalCode": {
+						"type": "string"
+					},
+					"country": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"isVerified": {
+						"type": "boolean"
+					},
+					"rating": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalReviews": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"businessName",
+					"isVerified",
+					"rating",
+					"totalReviews"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserProfileResponse": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"role": {
+						"$ref": "#/components/schemas/Role"
+					},
+					"isEmailVerified": {
+						"type": "boolean"
+					},
+					"isVendorVerified": {
+						"type": "boolean"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"avatar": {
+						"type": "string"
+					},
+					"businessName": {
+						"type": "string"
+					},
+					"businessAddress": {
+						"type": "string"
+					},
+					"customer": {
+						"$ref": "#/components/schemas/CustomerProfileDto"
+					},
+					"vendor": {
+						"$ref": "#/components/schemas/VendorProfileDto"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"email",
+					"role",
+					"isEmailVerified",
+					"isVendorVerified",
+					"isActive",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse_UserProfileResponse_": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/UserProfileResponse"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/UserProfileResponse"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegisterSchema": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"role": {
+						"$ref": "#/components/schemas/Role"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"businessName": {
+						"type": "string"
+					},
+					"businessAddress": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"VerifyEmailSchema": {
+				"properties": {
+					"token": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"token"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResendVerificationSchema": {
+				"properties": {
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AuthResponse": {
+				"properties": {
+					"user": {
+						"$ref": "#/components/schemas/UserProfileResponse"
+					},
+					"accessToken": {
+						"type": "string"
+					},
+					"refreshToken": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"user",
+					"accessToken",
+					"refreshToken"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse_AuthResponse_": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/AuthResponse"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/AuthResponse"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginSchema": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TokenResponse": {
+				"properties": {
+					"accessToken": {
+						"type": "string"
+					},
+					"refreshToken": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"accessToken",
+					"refreshToken"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse_TokenResponse_": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/TokenResponse"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/TokenResponse"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RefreshTokenSchema": {
+				"properties": {
+					"refreshToken": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"refreshToken"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ChangePasswordSchema": {
+				"properties": {
+					"oldPassword": {
+						"type": "string"
+					},
+					"newPassword": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"oldPassword",
+					"newPassword"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ForgotPasswordSchema": {
+				"properties": {
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResetPasswordSchema": {
+				"properties": {
+					"token": {
+						"type": "string"
+					},
+					"newPassword": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"token",
+					"newPassword"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse__available-boolean__": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"properties": {
+									"available": {
+										"type": "boolean"
+									}
+								},
+								"required": [
+									"available"
+								],
+								"type": "object"
+							},
+							{
+								"items": {
+									"properties": {
+										"available": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"available"
+									],
+									"type": "object"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateProfileSchema": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"avatar": {
+						"type": "string"
+					},
+					"businessName": {
+						"type": "string"
+					},
+					"businessAddress": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AdminUpdateUserStatusSchema": {
+				"properties": {
+					"isActive": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"isActive"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AdminVerifyVendorSchema": {
+				"properties": {
+					"isVerified": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"isVerified"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
 			"AdminPermission": {
 				"enum": [
@@ -876,6 +782,180 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"RefreshTokenResponse": {
+				"properties": {
+					"accessToken": {
+						"type": "string"
+					},
+					"refreshToken": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"accessToken",
+					"refreshToken"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse_RefreshTokenResponse_": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/RefreshTokenResponse"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/RefreshTokenResponse"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AdminRefreshTokenSchema": {
+				"properties": {
+					"refreshToken": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"refreshToken"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AdminProfileResponse": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"role": {
+						"$ref": "#/components/schemas/Role"
+					},
+					"permissions": {
+						"items": {
+							"$ref": "#/components/schemas/AdminPermission"
+						},
+						"type": "array"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"email",
+					"role",
+					"permissions",
+					"isActive",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ApiResponse_AdminProfileResponse_": {
+				"properties": {
+					"data": {
+						"anyOf": [
+							{
+								"$ref": "#/components/schemas/AdminProfileResponse"
+							},
+							{
+								"items": {
+									"$ref": "#/components/schemas/AdminProfileResponse"
+								},
+								"type": "array"
+							}
+						],
+						"nullable": true
+					},
+					"success": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"data",
+					"success",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AdminChangePasswordSchema": {
+				"properties": {
+					"oldPassword": {
+						"type": "string"
+					},
+					"newPassword": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"oldPassword",
+					"newPassword"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AdminForgotPasswordSchema": {
+				"properties": {
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AdminResetPasswordSchema": {
+				"properties": {
+					"token": {
+						"type": "string"
+					},
+					"newPassword": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"token",
+					"newPassword"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -887,189 +967,11 @@
 		}
 	},
 	"info": {
-		"title": "Stradmont Solutions API",
+		"title": "Otherly API",
 		"version": "1.0.0",
-		"description": "Backend REST API for Stradmont Solutions (stradmontsolutions.com)"
+		"description": "Backend REST API for Otherly reverse-commerce marketplace"
 	},
 	"paths": {
-		"/products": {
-			"get": {
-				"operationId": "GetAllProducts",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_ProductEntity-Array_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Products"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "activeOnly",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					}
-				]
-			},
-			"post": {
-				"operationId": "CreateProduct",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_ProductEntity_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Products"
-				],
-				"security": [
-					{
-						"jwt": [
-							"PRODUCT"
-						]
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/CreateProductSchema"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/products/{slug}": {
-			"get": {
-				"operationId": "GetProductBySlug",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_ProductEntity_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Products"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "slug",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			},
-			"patch": {
-				"operationId": "UpdateProduct",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_ProductEntity_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Products"
-				],
-				"security": [
-					{
-						"jwt": [
-							"PRODUCT"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "slug",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UpdateProductSchema"
-							}
-						}
-					}
-				}
-			},
-			"delete": {
-				"operationId": "DeleteProduct",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_null_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Products"
-				],
-				"security": [
-					{
-						"jwt": [
-							"PRODUCT"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "slug",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
 		"/media": {
 			"post": {
 				"operationId": "Upload",
@@ -1081,10 +983,8 @@
 								"schema": {
 									"anyOf": [
 										{
-											"$ref": "#/components/schemas/Media"
-										},
-										{
 											"properties": {
+												"data": {},
 												"message": {
 													"type": "string"
 												},
@@ -1094,6 +994,50 @@
 											},
 											"required": [
 												"message",
+												"status"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"message": {},
+												"data": {
+													"properties": {
+														"url": {
+															"type": "string"
+														},
+														"mediaType": {
+															"$ref": "#/components/schemas/MediaType"
+														},
+														"fileSize": {
+															"type": "string"
+														},
+														"mimeType": {
+															"type": "string"
+														},
+														"name": {
+															"type": "string"
+														},
+														"id": {
+															"type": "string"
+														}
+													},
+													"required": [
+														"url",
+														"mediaType",
+														"fileSize",
+														"mimeType",
+														"name",
+														"id"
+													],
+													"type": "object"
+												},
+												"status": {
+													"type": "string"
+												}
+											},
+											"required": [
+												"data",
 												"status"
 											],
 											"type": "object"
@@ -1138,9 +1082,9 @@
 				}
 			}
 		},
-		"/letters": {
+		"/media/{id}": {
 			"get": {
-				"operationId": "GetAllLetters",
+				"operationId": "GetById",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -1148,56 +1092,44 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"pagination": {
+										"data": {
 											"properties": {
-												"lastPage": {
-													"type": "number",
-													"format": "double"
+												"url": {
+													"type": "string"
 												},
-												"prevPage": {
-													"type": "number",
-													"format": "double"
+												"mediaType": {
+													"$ref": "#/components/schemas/MediaType"
 												},
-												"nextPage": {
-													"type": "number",
-													"format": "double"
+												"fileSize": {
+													"type": "string"
 												},
-												"currentPage": {
-													"type": "number",
-													"format": "double"
+												"mimeType": {
+													"type": "string"
 												},
-												"count": {
-													"type": "number",
-													"format": "double"
+												"name": {
+													"type": "string"
+												},
+												"id": {
+													"type": "string"
 												}
 											},
 											"required": [
-												"lastPage",
-												"prevPage",
-												"nextPage",
-												"currentPage",
-												"count"
+												"url",
+												"mediaType",
+												"fileSize",
+												"mimeType",
+												"name",
+												"id"
 											],
 											"type": "object"
 										},
-										"data": {
-											"items": {
-												"$ref": "#/components/schemas/LetterEntity"
-											},
-											"type": "array"
-										},
 										"success": {
 											"type": "boolean"
-										},
-										"message": {
-											"type": "string"
 										}
 									},
 									"required": [
-										"pagination",
 										"data",
-										"success",
-										"message"
+										"success"
 									],
 									"type": "object"
 								}
@@ -1206,205 +1138,22 @@
 					}
 				},
 				"tags": [
-					"Stradmont Letters"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "page",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "limit",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "kind",
-						"required": false,
-						"schema": {
-							"$ref": "#/components/schemas/LetterKind"
-						}
-					},
-					{
-						"in": "query",
-						"name": "publishedOnly",
-						"required": false,
-						"schema": {
-							"type": "boolean"
-						}
-					}
-				]
-			},
-			"post": {
-				"operationId": "CreateLetter",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_LetterEntity_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Stradmont Letters"
-				],
-				"security": [
-					{
-						"jwt": [
-							"LETTERS"
-						]
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/CreateLetterSchema"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/letters/{slug}": {
-			"get": {
-				"operationId": "GetLetterBySlug",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_LetterEntity_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Stradmont Letters"
+					"Media"
 				],
 				"security": [],
 				"parameters": [
 					{
 						"in": "path",
-						"name": "slug",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"type": "string"
 						}
 					}
 				]
-			},
-			"patch": {
-				"operationId": "UpdateLetter",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_LetterEntity_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Stradmont Letters"
-				],
-				"security": [
-					{
-						"jwt": [
-							"LETTERS"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "slug",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UpdateLetterSchema"
-							}
-						}
-					}
-				}
 			},
 			"delete": {
-				"operationId": "DeleteLetter",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_null_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Stradmont Letters"
-				],
-				"security": [
-					{
-						"jwt": [
-							"LETTERS"
-						]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "slug",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/emails": {
-			"get": {
-				"operationId": "GetEmailLogs",
+				"operationId": "Delete",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -1412,56 +1161,16 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"pagination": {
-											"properties": {
-												"lastPage": {
-													"type": "number",
-													"format": "double"
-												},
-												"prevPage": {
-													"type": "number",
-													"format": "double"
-												},
-												"nextPage": {
-													"type": "number",
-													"format": "double"
-												},
-												"currentPage": {
-													"type": "number",
-													"format": "double"
-												},
-												"count": {
-													"type": "number",
-													"format": "double"
-												}
-											},
-											"required": [
-												"lastPage",
-												"prevPage",
-												"nextPage",
-												"currentPage",
-												"count"
-											],
-											"type": "object"
-										},
-										"data": {
-											"items": {
-												"$ref": "#/components/schemas/EmailLogEntity"
-											},
-											"type": "array"
+										"message": {
+											"type": "string"
 										},
 										"success": {
 											"type": "boolean"
-										},
-										"message": {
-											"type": "string"
 										}
 									},
 									"required": [
-										"pagination",
-										"data",
-										"success",
-										"message"
+										"message",
+										"success"
 									],
 									"type": "object"
 								}
@@ -1470,68 +1179,7 @@
 					}
 				},
 				"tags": [
-					"Email Logs"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "page",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "limit",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "status",
-						"required": false,
-						"schema": {
-							"$ref": "#/components/schemas/EmailDeliveryStatus"
-						}
-					},
-					{
-						"in": "query",
-						"name": "mailType",
-						"required": false,
-						"schema": {
-							"$ref": "#/components/schemas/MailType"
-						}
-					}
-				]
-			}
-		},
-		"/emails/{id}/retry": {
-			"post": {
-				"operationId": "RetryEmail",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_EmailLogEntity_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Email Logs"
+					"Media"
 				],
 				"security": [
 					{
@@ -1822,9 +1470,676 @@
 				}
 			}
 		},
-		"/admin/auth": {
+		"/auth/register": {
 			"post": {
-				"operationId": "Create",
+				"operationId": "Register",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_UserProfileResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegisterSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/verify-email": {
+			"post": {
+				"operationId": "VerifyEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/VerifyEmailSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/resend-verification": {
+			"post": {
+				"operationId": "ResendVerification",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ResendVerificationSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_AuthResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/refresh": {
+			"post": {
+				"operationId": "Refresh",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_TokenResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RefreshTokenSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/logout": {
+			"post": {
+				"operationId": "Logout",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/auth/me": {
+			"get": {
+				"operationId": "Me",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_UserProfileResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/auth/change-password": {
+			"post": {
+				"operationId": "ChangePassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ChangePasswordSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/forgot-password": {
+			"post": {
+				"operationId": "ForgotPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ForgotPasswordSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/reset-password": {
+			"post": {
+				"operationId": "ResetPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ResetPasswordSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/check-email": {
+			"get": {
+				"operationId": "CheckEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse__available-boolean__"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/auth/profile": {
+			"patch": {
+				"operationId": "UpdateProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_UserProfileResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateProfileSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/account": {
+			"delete": {
+				"operationId": "DeleteAccount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/admin/users": {
+			"get": {
+				"operationId": "GetUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"pagination": {
+											"properties": {
+												"lastPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"prevPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"nextPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"currentPage": {
+													"type": "number",
+													"format": "double"
+												},
+												"count": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"lastPage",
+												"prevPage",
+												"nextPage",
+												"currentPage",
+												"count"
+											],
+											"type": "object"
+										},
+										"data": {
+											"items": {
+												"$ref": "#/components/schemas/UserProfileResponse"
+											},
+											"type": "array"
+										},
+										"success": {
+											"type": "boolean"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"pagination",
+										"data",
+										"success",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin User Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"ADMIN"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "role",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/Role"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isActive",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"in": "query",
+						"name": "isVendorVerified",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/admin/users/{id}": {
+			"get": {
+				"operationId": "GetUserById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_UserProfileResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin User Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"ADMIN"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/users/{id}/status": {
+			"patch": {
+				"operationId": "UpdateUserStatus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_UserProfileResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin User Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"ADMIN"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AdminUpdateUserStatusSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/users/{id}/verify-vendor": {
+			"patch": {
+				"operationId": "VerifyVendor",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_UserProfileResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin User Management"
+				],
+				"security": [
+					{
+						"jwt": [
+							"ADMIN"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AdminVerifyVendorSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/auth/login": {
+			"post": {
+				"operationId": "Login",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -1853,13 +2168,193 @@
 					}
 				}
 			}
+		},
+		"/admin/auth/refresh": {
+			"post": {
+				"operationId": "Refresh",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_RefreshTokenResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Auth System"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AdminRefreshTokenSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/auth/logout": {
+			"post": {
+				"operationId": "Logout",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Auth System"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/admin/auth/me": {
+			"get": {
+				"operationId": "GetProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_AdminProfileResponse_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Auth System"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/admin/auth/change-password": {
+			"post": {
+				"operationId": "ChangePassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Auth System"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AdminChangePasswordSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/auth/forgot-password": {
+			"post": {
+				"operationId": "ForgotPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Auth System"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AdminForgotPasswordSchema"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/auth/reset-password": {
+			"post": {
+				"operationId": "ResetPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Auth System"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AdminResetPasswordSchema"
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"servers": [
-		{
-			"url": "https://api.stradmontsolutions.com/api/v1",
-			"description": "Production server"
-		},
 		{
 			"url": "http://localhost:4000/api/v1",
 			"description": "Development server"

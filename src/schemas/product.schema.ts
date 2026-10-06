@@ -1,82 +1,116 @@
 import {
+  IsArray,
   IsBoolean,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
-  IsUrl,
+  IsUUID,
   MaxLength,
+  Min,
 } from 'class-validator';
 
 export class CreateProductSchema {
   @IsString()
-  @IsNotEmpty()
-  @MaxLength(150)
-  name!: string;
+  @IsNotEmpty({ message: 'Product title is required' })
+  @MaxLength(200)
+  title!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(220)
+  slug?: string;
 
   @IsString()
-  @IsNotEmpty()
-  @MaxLength(150)
-  slug!: string;
+  @IsNotEmpty({ message: 'Product description is required' })
+  description!: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(80)
-  tag!: string;
+  @IsNumber()
+  @Min(0, { message: 'Price cannot be negative' })
+  price!: number;
 
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(80)
-  status!: string;
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  compareAtPrice?: number;
 
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(500)
-  logo!: string;
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  stockQuantity?: number = 0;
 
-  @IsString()
-  @IsUrl({}, { message: 'Please provide a valid URL' })
-  @MaxLength(500)
-  url!: string;
+  @IsOptional()
+  @IsUUID()
+  subcategoryId?: string;
 
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  imageMediaIds?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[];
+
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  body!: string;
+  @MaxLength(100)
+  sku?: string;
 
   @IsOptional()
   @IsBoolean()
-  isActive?: boolean;
+  isActive?: boolean = true;
 }
 
 export class UpdateProductSchema {
   @IsOptional()
   @IsString()
-  @MaxLength(150)
-  name?: string;
+  @MaxLength(200)
+  title?: string;
 
   @IsOptional()
   @IsString()
-  @MaxLength(80)
-  tag?: string;
+  @MaxLength(220)
+  slug?: string;
 
   @IsOptional()
   @IsString()
-  @MaxLength(80)
-  status?: string;
+  description?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  price?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  compareAtPrice?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  stockQuantity?: number;
+
+  @IsOptional()
+  @IsUUID()
+  subcategoryId?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  imageMediaIds?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[];
 
   @IsOptional()
   @IsString()
-  @MaxLength(500)
-  logo?: string;
-
-  @IsOptional()
-  @IsString()
-  @IsUrl({}, { message: 'Please provide a valid URL' })
-  @MaxLength(500)
-  url?: string;
-
-  @IsOptional()
-  @IsString()
-  body?: string;
+  @MaxLength(100)
+  sku?: string;
 
   @IsOptional()
   @IsBoolean()

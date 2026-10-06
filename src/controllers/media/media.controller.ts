@@ -3,7 +3,10 @@ import fs from 'fs';
 import path from 'path';
 import {
   Controller,
+  Delete,
   FormField,
+  Get,
+  Path,
   Post,
   Request,
   Route,
@@ -51,18 +54,64 @@ class MediaController extends Controller {
       file.buffer,
     );
 
-    const res = await mediaService.uploadSingle(
+    const media = await mediaService.uploadSingle(
       mediaType as MediaType,
       file.mimetype,
       updatedFileName,
       file.size,
     );
-    return res;
+
+    return {
+      status: 'success',
+      data: {
+        id: media.id,
+        name: media.name,
+        mimeType: media.mimeType,
+        fileSize: media.fileSize,
+        mediaType: media.mediaType,
+        url: media.url,
+      },
+    };
+  }
+
+  @Get('/{id}')
+  async getById(@Path() id: string) {
+    const media = await mediaService.getById(id);
+    return {
+      success: true,
+      data: {
+        id: media.id,
+        name: media.name,
+        mimeType: media.mimeType,
+        fileSize: media.fileSize,
+        mediaType: media.mediaType,
+        url: media.url,
+      },
+    };
+  }
+
+  @Delete('/{id}')
+  @Security('jwt')
+  async delete(@Path() id: string) {
+    await mediaService.delete(id);
+    return {
+      success: true,
+      message: 'Media asset deleted successfully',
+    };
   }
 
   private validate(file: Express.Multer.File) {
-    const acceptedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg'];
-    const maxFileSize = 1024 * 1024 * 5; // 5MB
+    const acceptedExtensions = [
+      '.jpg',
+      '.jpeg',
+      '.png',
+      '.webp',
+      '.svg',
+      '.pdf',
+      '.doc',
+      '.docx',
+    ];
+    const maxFileSize = 1024 * 1024 * 10; // 10MB
 
     const ext = path.extname(file.originalname).toLowerCase();
     if (!acceptedExtensions.includes(ext)) {

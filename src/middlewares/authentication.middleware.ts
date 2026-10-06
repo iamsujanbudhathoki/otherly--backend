@@ -27,15 +27,21 @@ export async function expressAuthentication(
   const payload = JwtUtil.verify(token);
   request.user = payload;
 
-  if (payload.role !== Role.ADMIN && payload.role !== Role.SUPER_ADMIN) {
-    throw AppError.forbidden(messages.unAuthorized);
-  }
+  // If specific scopes / roles are required
+  if (scopes && scopes.length > 0) {
+    // Super admin bypasses scope checks
+    if (payload.role === Role.SUPER_ADMIN) {
+      return payload;
+    }
 
-  if (scopes && scopes.length > 0 && payload.role !== Role.SUPER_ADMIN) {
-    const hasScope = scopes.every((scope) =>
-      payload.permissions?.includes(scope as AdminPermission),
-    );
-    if (!hasScope) {
+    const hasRole = scopes.includes(payload.role);
+    const hasPermission =
+      payload.permissions &&
+      scopes.some((scope) =>
+        payload.permissions?.includes(scope as AdminPermission),
+      );
+
+    if (!hasRole && !hasPermission) {
       throw AppError.forbidden(messages.unAuthorized);
     }
   }

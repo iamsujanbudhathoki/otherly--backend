@@ -20,15 +20,11 @@
     },
     "spec": {
       "info": {
-        "title": "Stradmont Solutions API",
+        "title": "Otherly API",
         "version": "1.0.0",
-        "description": "Backend REST API for Stradmont Solutions (stradmontsolutions.com)"
+        "description": "Backend REST API for Otherly reverse-commerce marketplace"
       },
       "servers": [
-        {
-          "url": "https://api.stradmontsolutions.com/api/v1",
-          "description": "Production server"
-        },
         {
           "url": "http://localhost:4000/api/v1",
           "description": "Development server"

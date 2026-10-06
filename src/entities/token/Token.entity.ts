@@ -4,6 +4,7 @@ import { TokenEnum } from '../../constants/appConstant';
 
 export enum TokenOwnerType {
   ADMIN = 'admin',
+  USER = 'user',
 }
 
 @Entity('token')

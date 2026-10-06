@@ -1,5 +1,5 @@
 export default {
-  APP_NAME: 'Stradmont Solutions',
+  APP_NAME: 'Otherly',
 
   // Pagination
   DEFAULT_PAGE: 1,
@@ -15,16 +15,25 @@ export enum Environment {
 export enum MediaType {
   PRODUCT_IMAGE = 'PRODUCT_IMAGE',
   LETTER_COVER = 'LETTER_COVER',
+  AVATAR = 'AVATAR',
+  CATEGORY_ICON = 'CATEGORY_ICON',
+  CATEGORY_BANNER = 'CATEGORY_BANNER',
+  REQUEST_ATTACHMENT = 'REQUEST_ATTACHMENT',
+  DOCUMENT = 'DOCUMENT',
 }
 
 export enum Role {
   ADMIN = 'ADMIN',
   SUPER_ADMIN = 'SUPER_ADMIN',
+  VENDOR = 'VENDOR',
+  CUSTOMER = 'CUSTOMER',
 }
 
 export enum TokenEnum {
   REFRESH_TOKEN = 'REFRESH_TOKEN',
   ACCESS_TOKEN = 'ACCESS_TOKEN',
+  PASSWORD_RESET_TOKEN = 'PASSWORD_RESET_TOKEN',
+  EMAIL_VERIFICATION_TOKEN = 'EMAIL_VERIFICATION_TOKEN',
 }
 
 export enum ContactTopic {
@@ -50,6 +59,8 @@ export enum LetterKind {
 export enum MailType {
   CONTACT_ADMIN_NOTIFICATION = 'CONTACT_ADMIN_NOTIFICATION',
   CONTACT_USER_ACKNOWLEDGEMENT = 'CONTACT_USER_ACKNOWLEDGEMENT',
+  PASSWORD_RESET = 'PASSWORD_RESET',
+  EMAIL_VERIFICATION = 'EMAIL_VERIFICATION',
 }
 
 export enum EmailDeliveryStatus {
@@ -57,4 +68,39 @@ export enum EmailDeliveryStatus {
   SENT = 'SENT',
   FAILED = 'FAILED',
   SKIPPED = 'SKIPPED',
+}
+
+export enum RequestStatus {
+  DRAFT = 'DRAFT',
+  OPEN = 'OPEN',
+  IN_REVIEW = 'IN_REVIEW',
+  FULFILLED = 'FULFILLED',
+  CANCELLED = 'CANCELLED',
+  EXPIRED = 'EXPIRED',
+}
+
+export enum OfferStatus {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  WITHDRAWN = 'WITHDRAWN',
+}
+
+export enum OfferFulfillType {
+  IN_STOCK = 'IN_STOCK',
+  PARTIAL_STOCK = 'PARTIAL_STOCK',
+  CAN_SOURCE = 'CAN_SOURCE',
+}
+
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  SHIPPED = 'SHIPPED',
+  DELIVERED = 'DELIVERED',
+  CANCELLED = 'CANCELLED',
+}
+
+export enum OrderSourceType {
+  DIRECT_PURCHASE = 'DIRECT_PURCHASE',
+  REQUEST_OFFER = 'REQUEST_OFFER',
 }

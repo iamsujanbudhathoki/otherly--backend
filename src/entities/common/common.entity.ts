@@ -1,3 +1,4 @@
+import { Field, ID, InterfaceType } from 'type-graphql';
 import {
   BaseEntity,
   CreateDateColumn,
@@ -5,10 +6,13 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-export class CommonEntity extends BaseEntity {
+@InterfaceType({ description: 'Base entity with common fields' })
+export abstract class CommonEntity extends BaseEntity {
+  @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Field(() => Date)
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',

@@ -8,8 +8,12 @@ import { PaginatedInput } from '../interfaces/queryInterface';
 import {
   buildContactAdminNotificationTemplate,
   buildContactUserAcknowledgementTemplate,
+  buildPasswordResetEmailTemplate,
+  buildVerificationEmailTemplate,
   ContactEmailTemplatePayload,
+  PasswordResetEmailPayload,
   RenderedEmailTemplate,
+  VerificationEmailPayload,
 } from '../templates/email';
 import { AppError } from './appError.util';
 import { paginateResponse, skipTakeMaker } from './pageAndLimit';
@@ -162,6 +166,36 @@ class EmailUtil {
         },
       }),
     ]);
+  }
+
+  async sendVerificationEmail(
+    to: string,
+    payload: VerificationEmailPayload,
+  ): Promise<void> {
+    const template = buildVerificationEmailTemplate(payload);
+    await this.dispatchAndPersist({
+      to,
+      mailType: MailType.EMAIL_VERIFICATION,
+      template,
+      metadata: {
+        recipientEmail: to,
+      },
+    });
+  }
+
+  async sendPasswordResetEmail(
+    to: string,
+    payload: PasswordResetEmailPayload,
+  ): Promise<void> {
+    const template = buildPasswordResetEmailTemplate(payload);
+    await this.dispatchAndPersist({
+      to,
+      mailType: MailType.PASSWORD_RESET,
+      template,
+      metadata: {
+        recipientEmail: to,
+      },
+    });
   }
 
   async getEmailLogs(query: EmailLogFilterQuery) {
