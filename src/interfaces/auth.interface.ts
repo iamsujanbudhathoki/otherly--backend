@@ -32,6 +32,7 @@ export interface UserProfileResponse {
   email: string;
   role: Role;
   isEmailVerified: boolean;
+  isPhoneVerified?: boolean;
   isVendorVerified: boolean;
   isActive: boolean;
   phoneNumber?: string;
@@ -52,4 +53,9 @@ export interface AuthResponse {
 export interface TokenResponse {
   accessToken: string;
   refreshToken: string;
+}
+
+export interface SendOtpResponse {
+  cooldownSeconds: number;
+  otp?: string;
 }

@@ -6,7 +6,12 @@ import { Token } from '../token/Token.entity';
 
 export enum AdminPermission {
   PRODUCT = 'PRODUCT',
-  LETTERS = 'LETTERS',
+  CATEGORIES = 'CATEGORIES',
+  REQUESTS = 'REQUESTS',
+  OFFERS = 'OFFERS',
+  ORDERS = 'ORDERS',
+  VENDORS = 'VENDORS',
+  CUSTOMERS = 'CUSTOMERS',
   CONTACTS = 'CONTACTS',
   LOGS = 'LOGS',
 }

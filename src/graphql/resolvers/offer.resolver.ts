@@ -28,6 +28,31 @@ export class OfferResolver {
     );
   }
 
+  @Authorized()
+  @Query(() => OfferEntity, {
+    nullable: true,
+    description: 'Retrieve details of an offer by unique ID',
+  })
+  async offer(@Arg('id') id: string): Promise<OfferEntity | null> {
+    try {
+      return await this.offerService.getById(id);
+    } catch {
+      return null;
+    }
+  }
+
+  @Authorized([Role.VENDOR])
+  @Query(() => [OfferEntity], {
+    description: 'Retrieve all offers submitted by the authenticated vendor',
+  })
+  async myOffers(
+    @Ctx() { user }: GraphQLContext,
+    @Arg('status', () => OfferStatus, { nullable: true })
+    status?: OfferStatus,
+  ): Promise<OfferEntity[]> {
+    return await this.offerService.getVendorOffers(user!.sub, status);
+  }
+
   @Authorized([Role.VENDOR])
   @Query(() => [OfferEntity], {
     description: 'Retrieve all offers submitted by the authenticated vendor',

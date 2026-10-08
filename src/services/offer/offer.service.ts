@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 import { AppDataSource } from '../../config/database.config';
 import {
+  NotificationType,
   OfferFulfillType,
   OfferStatus,
   OrderSourceType,
@@ -13,6 +14,7 @@ import { OfferEntity } from '../../entities/offer/Offer.entity';
 import { OrderEntity } from '../../entities/order/Order.entity';
 import { RequestEntity } from '../../entities/request/Request.entity';
 import { VendorEntity } from '../../entities/vendor/Vendor.entity';
+import { NotificationService } from '../notification/notification.service';
 import { AppError } from '../../utils/appError.util';
 
 export interface SubmitOfferDto {
@@ -32,6 +34,8 @@ export class OfferService {
   private vendorRepo = AppDataSource.getRepository(VendorEntity);
   private customerRepo = AppDataSource.getRepository(CustomerEntity);
   private orderRepo = AppDataSource.getRepository(OrderEntity);
+
+  constructor(private notificationService?: NotificationService) {}
 
   async submitOffer(
     vendorUserId: string,
@@ -85,7 +89,29 @@ export class OfferService {
       status: OfferStatus.PENDING,
     });
 
-    return await this.offerRepo.save(offer);
+    const savedOffer = await this.offerRepo.save(offer);
+
+    // Notify customer asynchronously
+    try {
+      const reqWithCust = await this.requestRepo.findOne({
+        where: { id: data.requestId },
+        relations: ['customer'],
+      });
+      if (reqWithCust?.customer?.userId) {
+        await this.notificationService?.create({
+          userId: reqWithCust.customer.userId,
+          type: NotificationType.OFFER_RECEIVED,
+          title: 'New Offer Received',
+          message: `A vendor has submitted an offer of $${savedOffer.totalPrice} for your request "${reqWithCust.title}".`,
+          entityType: 'offer',
+          entityId: savedOffer.id,
+        });
+      }
+    } catch {
+      // Non-blocking notification
+    }
+
+    return savedOffer;
   }
 
   async getRequestOffers(
@@ -188,10 +214,12 @@ export class OfferService {
       );
     }
 
-    return await AppDataSource.transaction(async (manager) => {
+    const targetOffer = offer;
+
+    const result = await AppDataSource.transaction(async (manager) => {
       // 1. Mark accepted offer
-      offer.status = OfferStatus.ACCEPTED;
-      await manager.save(OfferEntity, offer);
+      targetOffer.status = OfferStatus.ACCEPTED;
+      await manager.save(OfferEntity, targetOffer);
 
       // 2. Reject other pending offers for this request
       await manager
@@ -241,10 +269,28 @@ export class OfferService {
       const savedOrder = await manager.save(OrderEntity, order);
 
       return {
-        offer,
+        offer: targetOffer,
         order: savedOrder,
       };
     });
+
+    // Notify vendor of accepted offer
+    try {
+      if (targetOffer.vendor?.userId) {
+        await this.notificationService?.create({
+          userId: targetOffer.vendor.userId,
+          type: NotificationType.OFFER_ACCEPTED,
+          title: 'Offer Accepted!',
+          message: `Your offer for request "${targetOffer.request?.title || 'item'}" was accepted! Order #${result.order.orderNumber} has been created.`,
+          entityType: 'order',
+          entityId: result.order.id,
+        });
+      }
+    } catch {
+      // Non-blocking notification
+    }
+
+    return result;
   }
 
   async withdrawOffer(
@@ -275,5 +321,22 @@ export class OfferService {
 
     offer.status = OfferStatus.WITHDRAWN;
     return await this.offerRepo.save(offer);
+  }
+
+  async getById(id: string): Promise<OfferEntity> {
+    const offer = await this.offerRepo.findOne({
+      where: { id },
+      relations: [
+        'request',
+        'vendor',
+        'vendor.user',
+        'request.customer',
+        'request.customer.user',
+      ],
+    });
+    if (!offer) {
+      throw AppError.notFound('Offer not found');
+    }
+    return offer;
   }
 }

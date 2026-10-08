@@ -12,7 +12,10 @@ export class MediaResolver {
   })
   async media(@Arg('id') id: string): Promise<Media | null> {
     const item = await MediaHelper.getMediaById(id);
-    return item ?? null;
+    if (!item) {
+      return null;
+    }
+    return item;
   }
 
   @Query(() => [Media], {

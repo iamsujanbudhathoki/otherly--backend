@@ -13,8 +13,6 @@ const messages = {
   turnstileRequired: 'Please complete the security verification challenge',
   turnstileFailed:
     'Security verification failed or expired. Please refresh and try again.',
-  letterNotFound: 'Letter not found',
-  letterAlreadyExists: 'A letter with this slug already exists',
   productNotFound: 'Product not found',
   productAlreadyExists: 'A product with this slug already exists',
   invalidAuth: 'Invalid email or password',

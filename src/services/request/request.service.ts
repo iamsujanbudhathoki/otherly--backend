@@ -34,6 +34,16 @@ export interface RequestFilterDto {
   categoryId?: string;
   status?: RequestStatus;
   search?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface PaginatedRequestResult {
+  data: RequestEntity[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 @injectable()
@@ -69,7 +79,7 @@ export class RequestService {
     return await this.requestRepo.save(request);
   }
 
-  async getAll(filter: RequestFilterDto = {}): Promise<RequestEntity[]> {
+  private buildQuery(filter: RequestFilterDto = {}) {
     const qb = this.requestRepo
       .createQueryBuilder('request')
       .leftJoinAndSelect('request.customer', 'customer')
@@ -105,7 +115,34 @@ export class RequestService {
       );
     }
 
+    return qb;
+  }
+
+  async getAll(filter: RequestFilterDto = {}): Promise<RequestEntity[]> {
+    const qb = this.buildQuery(filter);
+    const page = Math.max(1, filter.page || 1);
+    const limit = Math.min(100, Math.max(1, filter.limit || 30));
+    qb.skip((page - 1) * limit).take(limit);
+
     return await qb.getMany();
+  }
+
+  async getPaginated(
+    filter: RequestFilterDto = {},
+  ): Promise<PaginatedRequestResult> {
+    const qb = this.buildQuery(filter);
+    const page = Math.max(1, filter.page || 1);
+    const limit = Math.min(100, Math.max(1, filter.limit || 30));
+    qb.skip((page - 1) * limit).take(limit);
+
+    const [data, total] = await qb.getManyAndCount();
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit) || 1,
+    };
   }
 
   async getById(id: string): Promise<RequestEntity> {

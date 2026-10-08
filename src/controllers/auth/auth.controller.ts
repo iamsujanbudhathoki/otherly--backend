@@ -19,6 +19,7 @@ import messages from '../../constants/messages.constants';
 import { ApiResponse } from '../../interfaces/apiResponse.interface';
 import {
   AuthResponse,
+  SendOtpResponse,
   TokenResponse,
   UserProfileResponse,
 } from '../../interfaces/auth.interface';
@@ -31,8 +32,10 @@ import {
   RegisterSchema,
   ResendVerificationSchema,
   ResetPasswordSchema,
+  SendOtpSchema,
   UpdateProfileSchema,
   VerifyEmailSchema,
+  VerifyOtpSchema,
 } from '../../schemas/auth.schema';
 import { AuthService } from '../../services/auth/auth.service';
 
@@ -42,6 +45,32 @@ import { AuthService } from '../../services/auth/auth.service';
 export class AuthController extends Controller {
   constructor(private authService?: AuthService) {
     super();
+  }
+
+  @Post('/otp/send')
+  @Middlewares(RequestValidator.validate(SendOtpSchema))
+  async sendOtp(
+    @Body() body: SendOtpSchema,
+  ): Promise<ApiResponse<SendOtpResponse>> {
+    const data = await this.authService!.sendOtp(body.phoneNumber);
+    return {
+      data,
+      message: 'Verification code sent to your mobile number successfully',
+      success: true,
+    };
+  }
+
+  @Post('/otp/verify')
+  @Middlewares(RequestValidator.validate(VerifyOtpSchema))
+  async verifyOtp(
+    @Body() body: VerifyOtpSchema,
+  ): Promise<ApiResponse<AuthResponse>> {
+    const data = await this.authService!.verifyOtp(body.phoneNumber, body.otp);
+    return {
+      data,
+      message: messages.validLogin,
+      success: true,
+    };
   }
 
   @Post('/register')

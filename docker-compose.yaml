@@ -3,7 +3,7 @@ version: '3.9'
 services:
   app:
     build: .
-    container_name: stradmont_api
+    container_name: otherly_api
     ports:
       - '4000:4000'
     environment:
@@ -14,7 +14,7 @@ services:
       DB_PORT: 5432
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
-      DB_NAME: stradmont_solutions
+      DB_NAME: otherly_marketplace
       DB_SSL: 'false'
       FRONTEND_BASE_URL: http://localhost:3000
       BASE_URL: http://localhost:4000
@@ -26,12 +26,12 @@ services:
 
   db:
     image: postgres:15-alpine
-    container_name: stradmont_db
+    container_name: otherly_db
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: stradmont_solutions
+      POSTGRES_DB: otherly_marketplace
     ports:
       - '5432:5432'
     volumes:

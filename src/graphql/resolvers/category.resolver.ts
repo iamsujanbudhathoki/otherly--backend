@@ -106,6 +106,18 @@ export class CategoryResolver {
     }
   }
 
+  @Query(() => CategoryEntity, {
+    nullable: true,
+    description: 'Retrieve a category by unique ID',
+  })
+  async categoryById(@Arg('id') id: string): Promise<CategoryEntity | null> {
+    try {
+      return await this.categoryService.getCategoryById(id);
+    } catch {
+      return null;
+    }
+  }
+
   @Query(() => [SubcategoryEntity], {
     description: 'Retrieve subcategories, optionally filtered by categoryId',
   })
@@ -126,6 +138,20 @@ export class CategoryResolver {
   ): Promise<SubcategoryEntity | null> {
     try {
       return await this.categoryService.getSubcategoryBySlug(slug);
+    } catch {
+      return null;
+    }
+  }
+
+  @Query(() => SubcategoryEntity, {
+    nullable: true,
+    description: 'Retrieve a subcategory by unique ID',
+  })
+  async subcategoryById(
+    @Arg('id') id: string,
+  ): Promise<SubcategoryEntity | null> {
+    try {
+      return await this.categoryService.getSubcategoryById(id);
     } catch {
       return null;
     }

@@ -3,16 +3,181 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
-"""Input data for creating a new product"""
-input CreateProductInput {
-  body: String!
-  isActive: Boolean = true
-  logo: String!
+"""Result of accepting an offer"""
+type AcceptOfferPayload {
+  offer: OfferEntity!
+  order: OrderEntity!
+}
+
+"""Product and request category"""
+type CategoryEntity {
+  bannerImage: String
+
+  """Centralized public URL of category banner image"""
+  bannerImageUrl: String
+
+  """Centralized Media asset object for banner image"""
+  bannerMedia: Media
+
+  """Referenced Media asset ID for banner image"""
+  bannerMediaId: String
+  createdAt: DateTimeISO!
+  description: String
+  displayOrder: Int!
+  icon: String
+
+  """Centralized Media asset object for category icon"""
+  iconMedia: Media
+
+  """Referenced Media asset ID for category icon"""
+  iconMediaId: String
+
+  """Centralized public URL of category icon"""
+  iconUrl: String
+  id: ID!
+  isActive: Boolean!
+  isFeatured: Boolean!
   name: String!
   slug: String!
-  status: String!
-  tag: String!
-  url: String!
+  subcategories: [SubcategoryEntity!]
+}
+
+"""Filter options for contact inquiries"""
+input ContactFilterInput {
+  search: String
+  status: ContactStatus
+  topic: ContactTopic
+}
+
+"""Status of incoming contact requests"""
+enum ContactStatus {
+  ARCHIVED
+  IN_PROGRESS
+  NEW
+  RESOLVED
+}
+
+"""Contact form topic options"""
+enum ContactTopic {
+  INVESTMENT
+  OTHER
+  OUR_PRODUCTS
+  PARTNERSHIP
+}
+
+"""Contact inquiry submitted by a visitor"""
+type ContactUsEntity {
+  company: String
+  createdAt: DateTimeISO!
+  email: String!
+  id: ID!
+  message: String!
+  name: String!
+  status: ContactStatus!
+  topic: ContactTopic!
+}
+
+"""Input data for creating a main category"""
+input CreateCategoryInput {
+  bannerImage: String
+  description: String
+  displayOrder: Int = 0
+  icon: String
+  isFeatured: Boolean = false
+  name: String!
+  slug: String
+}
+
+"""Input for submitting a contact inquiry"""
+input CreateContactInput {
+  company: String
+  email: String!
+  message: String!
+  name: String!
+  topic: ContactTopic!
+  turnstileToken: String
+}
+
+"""Input data for directly purchasing a product from a vendor"""
+input CreateDirectOrderInput {
+  notes: String
+  productId: String!
+  quantity: Int! = 1
+  shippingAddress: String!
+}
+
+"""Input data for listing a new marketplace product"""
+input CreateProductInput {
+  compareAtPrice: Float
+  description: String!
+
+  """Array of Media asset UUID references for product images"""
+  imageMediaIds: [String!]
+  images: [String!]
+  isActive: Boolean = true
+  price: Float!
+  sku: String
+  slug: String
+  stockQuantity: Int = 0
+  subcategoryId: String
+  title: String!
+}
+
+"""Input data for creating a reverse marketplace product request"""
+input CreateRequestInput {
+  """Array of Media asset UUID references for attachments"""
+  attachmentMediaIds: [String!]
+  budget: Float
+  deadline: DateTimeISO
+  description: String!
+  location: String
+  quantity: Int! = 1
+  requiredWithinDays: Int
+  subcategoryId: String
+  title: String!
+}
+
+"""Input data for creating a subcategory"""
+input CreateSubcategoryInput {
+  categoryId: String!
+  description: String
+  displayOrder: Int = 0
+  name: String!
+  slug: String
+}
+
+"""Customer profile entity for buyers"""
+type CustomerEntity {
+  city: String
+  country: String
+  createdAt: DateTimeISO!
+  id: ID!
+  notes: String
+  postalCode: String
+  preferences: String
+  shippingAddress: String
+  state: String
+  user: User!
+  userId: String!
+}
+
+"""Customer activity statistics"""
+type CustomerStatsType {
+  activeRequests: Int!
+  totalOrders: Int!
+  totalRequests: Int!
+}
+
+"""Customer details attached to user"""
+type CustomerSummaryType {
+  city: String
+  country: String
+  id: ID!
+  notes: String
+  postalCode: String
+  preferences: String
+  shippingAddress: String
+  state: String
 }
 
 """
@@ -20,48 +185,482 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTimeISO
 
-type Mutation {
-  """Create a new product (Admin only)"""
-  createProduct(input: CreateProductInput!): ProductEntity!
-
-  """Soft-delete a product by slug (Admin only)"""
-  deleteProduct(slug: String!): Boolean!
-
-  """Update an existing product by slug (Admin only)"""
-  updateProduct(input: UpdateProductInput!, slug: String!): ProductEntity!
-}
-
-"""Product item in Stradmont Solutions"""
-type ProductEntity {
-  body: String!
+"""Centralized media asset record"""
+type Media {
   createdAt: DateTimeISO!
+  fileSize: String
   id: ID!
-  isActive: Boolean!
-  logo: String!
+  mediaType: MediaType!
+  mimeType: String!
   name: String!
-  slug: String!
-  status: String!
-  tag: String!
+
+  """Fully qualified public URL for this centralized media asset"""
   url: String!
 }
 
+"""Types of uploaded media"""
+enum MediaType {
+  AVATAR
+  CATEGORY_BANNER
+  CATEGORY_ICON
+  DOCUMENT
+  PRODUCT_IMAGE
+  REQUEST_ATTACHMENT
+}
+
+type Mutation {
+  """
+  Accept a vendor offer for a request, closing negotiation and creating an Order (Customers only)
+  """
+  acceptOffer(offerId: String!): AcceptOfferPayload!
+
+  """Update user account active/suspended status (Admin only)"""
+  adminUpdateUserStatus(id: String!, isActive: Boolean!): UserProfileType!
+
+  """Verify or unverify vendor status (Admin only)"""
+  adminVerifyVendor(id: String!, isVerified: Boolean!): UserProfileType!
+
+  """Cancel an existing order and restore inventory if direct purchase"""
+  cancelOrder(orderId: String!, reason: String): OrderEntity!
+
+  """Cancel an existing product request (Customers only)"""
+  cancelRequest(id: String!): RequestEntity!
+
+  """Create a new top-level category (Admin only)"""
+  createCategory(input: CreateCategoryInput!): CategoryEntity!
+
+  """
+  Directly purchase a product from a vendor in traditional e-commerce fashion (Customers only)
+  """
+  createDirectOrder(input: CreateDirectOrderInput!): OrderEntity!
+
+  """List a new product in the marketplace (Vendors only)"""
+  createProduct(input: CreateProductInput!): ProductEntity!
+
+  """
+  Post a new product/project request in the reverse marketplace (Customers only)
+  """
+  createRequest(input: CreateRequestInput!): RequestEntity!
+
+  """Create a new subcategory (Admin only)"""
+  createSubcategory(input: CreateSubcategoryInput!): SubcategoryEntity!
+
+  """Soft-delete a category (Admin only)"""
+  deleteCategory(id: String!): Boolean!
+
+  """Delete a contact inquiry (Admin only)"""
+  deleteContact(id: String!): Boolean!
+
+  """Delete a notification"""
+  deleteNotification(id: String!): Boolean!
+
+  """Delete a product listed by the authenticated vendor"""
+  deleteProduct(id: String!): Boolean!
+
+  """Soft-delete a subcategory (Admin only)"""
+  deleteSubcategory(id: String!): Boolean!
+
+  """Mark all notifications as read for current user"""
+  markAllNotificationsAsRead: Boolean!
+
+  """Mark a specific notification as read"""
+  markNotificationAsRead(id: String!): NotificationEntity!
+
+  """Submit a new contact inquiry to Otherly support"""
+  submitContact(input: CreateContactInput!): ContactUsEntity!
+
+  """Submit a quote/offer responding to a customer request (Vendors only)"""
+  submitOffer(input: SubmitOfferInput!): OfferEntity!
+
+  """Update an existing category (Admin only)"""
+  updateCategory(id: String!, input: UpdateCategoryInput!): CategoryEntity!
+
+  """Update the status of a contact inquiry (Admin only)"""
+  updateContactStatus(id: String!, status: ContactStatus!): ContactUsEntity!
+
+  """Update customer address and preferences (Customers only)"""
+  updateCustomerProfile(input: UpdateCustomerProfileInput!): CustomerEntity!
+
+  """Update the fulfillment status of an order (Vendors and Admins only)"""
+  updateOrderStatus(orderId: String!, status: OrderStatus!): OrderEntity!
+
+  """Update a product listed by the authenticated vendor"""
+  updateProduct(id: String!, input: UpdateProductInput!): ProductEntity!
+
+  """Update an existing product request (Customers only)"""
+  updateRequest(id: String!, input: UpdateRequestInput!): RequestEntity!
+
+  """Update an existing subcategory (Admin only)"""
+  updateSubcategory(id: String!, input: UpdateSubcategoryInput!): SubcategoryEntity!
+
+  """
+  Update vendor business details, address, and description (Vendors only)
+  """
+  updateVendorProfile(input: UpdateVendorProfileInput!): VendorEntity!
+
+  """Withdraw a pending offer (Vendors only)"""
+  withdrawOffer(offerId: String!): OfferEntity!
+}
+
+"""In-app notification for users across marketplace events"""
+type NotificationEntity {
+  createdAt: DateTimeISO!
+  entityId: String
+  entityType: String
+  id: ID!
+  isRead: Boolean!
+  message: String!
+  readAt: DateTimeISO
+  title: String!
+  type: NotificationType!
+  userId: String!
+}
+
+"""Types of in-app user notifications"""
+enum NotificationType {
+  GENERAL
+  OFFER_ACCEPTED
+  OFFER_RECEIVED
+  OFFER_REJECTED
+  ORDER_CANCELLED
+  ORDER_CREATED
+  ORDER_STATUS_CHANGED
+  REQUEST_FULFILLED
+  SYSTEM_ALERT
+  VENDOR_VERIFIED
+}
+
+"""Vendor quote or offer submitted for a customer request"""
+type OfferEntity {
+  createdAt: DateTimeISO!
+  deliveryDays: Int!
+  fulfillType: OfferFulfillType!
+  id: ID!
+  notes: String
+  offeredQuantity: Int!
+  request: RequestEntity!
+  requestId: String!
+  status: OfferStatus!
+  totalPrice: Float!
+  unitPrice: Float!
+  vendor: VendorEntity!
+  vendorId: String!
+}
+
+"""Inventory or fulfillment type for vendor offers"""
+enum OfferFulfillType {
+  CAN_SOURCE
+  IN_STOCK
+  PARTIAL_STOCK
+}
+
+"""Status of vendor offers"""
+enum OfferStatus {
+  ACCEPTED
+  PENDING
+  REJECTED
+  WITHDRAWN
+}
+
+"""
+Order transaction created from either a direct product purchase or an accepted reverse request offer
+"""
+type OrderEntity {
+  createdAt: DateTimeISO!
+  customer: CustomerEntity!
+  customerId: String!
+  id: ID!
+  notes: String
+  offer: OfferEntity
+  offerId: String
+  orderNumber: String!
+  product: ProductEntity
+  productId: String
+  quantity: Int!
+  request: RequestEntity
+  requestId: String
+  shippingAddress: String!
+  sourceType: OrderSourceType!
+  status: OrderStatus!
+  totalAmount: Float!
+  unitPrice: Float!
+  vendor: VendorEntity!
+  vendorId: String!
+}
+
+"""Source origin of the order (Direct product or reverse offer)"""
+enum OrderSourceType {
+  DIRECT_PURCHASE
+  REQUEST_OFFER
+}
+
+"""Marketplace order status"""
+enum OrderStatus {
+  CANCELLED
+  CONFIRMED
+  DELIVERED
+  PENDING
+  SHIPPED
+}
+
+"""Paginated contact inquiries list"""
+type PaginatedContactsType {
+  data: [ContactUsEntity!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+"""Paginated marketplace products response"""
+type PaginatedProductsType {
+  data: [ProductEntity!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+"""Paginated buyer product requests response"""
+type PaginatedRequestsType {
+  data: [RequestEntity!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+"""Paginated user management list"""
+type PaginatedUsersType {
+  data: [UserProfileType!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+"""Marketplace product listed by a vendor"""
+type ProductEntity {
+  compareAtPrice: Float
+  createdAt: DateTimeISO!
+  description: String!
+  id: ID!
+
+  """Centralized Media asset UUID references for product images"""
+  imageMediaIds: [String!]!
+
+  """Centralized public URLs of product images"""
+  imageUrls: [String!]!
+  images: [String!]
+  isActive: Boolean!
+
+  """Centralized Media asset objects for product images"""
+  media: [Media!]
+  price: Float!
+  sku: String
+  slug: String!
+  stockQuantity: Int!
+  subcategory: SubcategoryEntity
+  subcategoryId: String
+  title: String!
+  vendor: VendorEntity!
+  vendorId: String!
+}
+
+"""Filter options for querying products"""
+input ProductFilterInput {
+  activeOnly: Boolean = true
+  categoryId: String
+  inStockOnly: Boolean
+  limit: Int = 30
+  maxPrice: Float
+  minPrice: Float
+  page: Int = 1
+  search: String
+  subcategoryId: String
+  vendorId: String
+}
+
 type Query {
+  """Retrieve user details by ID (Admin only)"""
+  adminUser(id: String!): UserProfileType!
+
+  """Retrieve paginated users for admin management"""
+  adminUsers(isActive: Boolean, isVendorVerified: Boolean, limit: Int = 20, page: Int = 1, role: Role, search: String): PaginatedUsersType!
+
+  """Retrieve all product/request categories"""
+  categories(activeOnly: Boolean = true): [CategoryEntity!]!
+
+  """Retrieve a category by unique slug"""
+  category(slug: String!): CategoryEntity
+
+  """Retrieve a category by unique ID"""
+  categoryById(id: String!): CategoryEntity
+
+  """Retrieve contact inquiry by ID (Admin only)"""
+  contact(id: String!): ContactUsEntity
+
+  """Retrieve paginated contact inquiries (Admin only)"""
+  contacts(filter: ContactFilterInput, limit: Int = 20, page: Int = 1): PaginatedContactsType!
+
+  """Retrieve buyer summary activity stats (total requests, active, orders)"""
+  customerStats: CustomerStatsType!
+
+  """Retrieve featured categories for homepage/navigation highlights"""
+  featuredCategories: [CategoryEntity!]!
+
   """
   Retrieve the profile of the currently authenticated user (Customer, Vendor, or Admin)
   """
   me: UserProfileType!
 
+  """Retrieve a centralized media asset record by unique ID"""
+  media(id: String!): Media
+
+  """Retrieve multiple centralized media assets by IDs"""
+  medias(ids: [String!]!): [Media!]!
+
+  """Retrieve the customer profile for the authenticated buyer"""
+  myCustomerProfile: CustomerEntity!
+
+  """Retrieve all requests posted by the authenticated customer"""
+  myCustomerRequests(status: RequestStatus): [RequestEntity!]!
+
+  """Retrieve user in-app notifications"""
+  myNotifications(limit: Int, page: Int, unreadOnly: Boolean): [NotificationEntity!]!
+
+  """Retrieve all offers submitted by the authenticated vendor"""
+  myOffers(status: OfferStatus): [OfferEntity!]!
+
+  """
+  Retrieve orders for the authenticated user (customer purchases or vendor sales)
+  """
+  myOrders: [OrderEntity!]!
+
+  """Retrieve all requests posted by the authenticated customer"""
+  myRequests(status: RequestStatus): [RequestEntity!]!
+
+  """Retrieve all offers submitted by the authenticated vendor"""
+  myVendorOffers(status: OfferStatus): [OfferEntity!]!
+
+  """Retrieve products listed by the authenticated vendor"""
+  myVendorProducts(activeOnly: Boolean): [ProductEntity!]!
+
+  """Retrieve the vendor profile for the authenticated supplier"""
+  myVendorProfile: VendorEntity!
+
+  """Retrieve details of an offer by unique ID"""
+  offer(id: String!): OfferEntity
+
+  """Retrieve details of an order by ID"""
+  order(id: String!): OrderEntity!
+
+  """
+  Browse products with pagination metadata (total, totalPages, page, limit)
+  """
+  paginatedProducts(filter: ProductFilterInput): PaginatedProductsType!
+
+  """
+  Browse customer requests with pagination metadata (total, totalPages, page, limit)
+  """
+  paginatedRequests(filter: RequestFilterInput): PaginatedRequestsType!
+
   """Simple ping health check"""
   ping: String!
 
-  """Retrieve a single product by its unique slug"""
+  """Retrieve a single product by unique slug"""
   product(slug: String!): ProductEntity
 
-  """Retrieve all products (defaults to active only)"""
-  products(activeOnly: Boolean = true): [ProductEntity!]!
+  """Retrieve a single product by unique ID"""
+  productById(id: String!): ProductEntity
+
+  """
+  Browse products with search, category, subcategory, price, and vendor filters
+  """
+  products(filter: ProductFilterInput): [ProductEntity!]!
+
+  """Retrieve a customer request by ID"""
+  request(id: String!): RequestEntity
+
+  """
+  Retrieve offers submitted for a specific request (filtered by permission)
+  """
+  requestOffers(requestId: String!): [OfferEntity!]!
+
+  """Browse open customer project/product requests (for vendors and buyers)"""
+  requests(filter: RequestFilterInput): [RequestEntity!]!
 
   """Detailed health status"""
   serverStatus: ServerStatus!
+
+  """Retrieve subcategories, optionally filtered by categoryId"""
+  subcategories(activeOnly: Boolean = true, categoryId: String): [SubcategoryEntity!]!
+
+  """Retrieve a subcategory by unique slug"""
+  subcategory(slug: String!): SubcategoryEntity
+
+  """Retrieve a subcategory by unique ID"""
+  subcategoryById(id: String!): SubcategoryEntity
+
+  """Get unread notification count for the authenticated user"""
+  unreadNotificationCount: Int!
+
+  """Retrieve public storefront profile of a vendor by ID"""
+  vendor(id: String!): VendorEntity
+
+  """
+  Retrieve vendor business activity stats (products, active offers, orders, rating)
+  """
+  vendorStats: VendorStatsType!
+
+  """Browse marketplace vendors directory"""
+  vendors(filter: VendorFilterInput): [VendorEntity!]!
+}
+
+"""Customer product or project request posted in the reverse marketplace"""
+type RequestEntity {
+  """Centralized Media asset UUID references for attachments"""
+  attachmentMediaIds: [String!]
+
+  """Centralized public URLs of request attachments"""
+  attachmentUrls: [String!]
+
+  """Centralized Media asset objects for request attachments"""
+  attachments: [Media!]
+  budget: Float
+  createdAt: DateTimeISO!
+  customer: CustomerEntity!
+  customerId: String!
+  deadline: DateTimeISO
+  description: String!
+  id: ID!
+  location: String
+  quantity: Int!
+  requiredWithinDays: Int
+  status: RequestStatus!
+  subcategory: SubcategoryEntity
+  subcategoryId: String
+  title: String!
+}
+
+"""Filter options for browsing requests"""
+input RequestFilterInput {
+  categoryId: String
+  limit: Int = 30
+  page: Int = 1
+  search: String
+  status: RequestStatus
+  subcategoryId: String
+}
+
+"""Status of buyer product/project requests"""
+enum RequestStatus {
+  CANCELLED
+  DRAFT
+  EXPIRED
+  FULFILLED
+  IN_REVIEW
+  OPEN
 }
 
 """User role levels"""
@@ -79,15 +678,123 @@ type ServerStatus {
   timestamp: String!
 }
 
+"""Subcategory belonging to a main category"""
+type SubcategoryEntity {
+  category: CategoryEntity!
+  categoryId: String!
+  createdAt: DateTimeISO!
+  description: String
+  displayOrder: Int!
+  id: ID!
+  isActive: Boolean!
+  name: String!
+  slug: String!
+}
+
+"""Input data for submitting a vendor offer/quote on a customer request"""
+input SubmitOfferInput {
+  deliveryDays: Int = 3
+  fulfillType: OfferFulfillType = IN_STOCK
+  notes: String
+  offeredQuantity: Int!
+  requestId: String!
+  totalPrice: Float
+  unitPrice: Float!
+}
+
+"""Input data for updating a main category"""
+input UpdateCategoryInput {
+  bannerImage: String
+  description: String
+  displayOrder: Int
+  icon: String
+  isActive: Boolean
+  isFeatured: Boolean
+  name: String
+  slug: String
+}
+
+"""Input data for updating customer profile"""
+input UpdateCustomerProfileInput {
+  city: String
+  country: String
+  notes: String
+  postalCode: String
+  preferences: String
+  shippingAddress: String
+  state: String
+}
+
 """Input data for updating an existing product"""
 input UpdateProductInput {
-  body: String
+  compareAtPrice: Float
+  description: String
+
+  """Array of Media asset UUID references for product images"""
+  imageMediaIds: [String!]
+  images: [String!]
   isActive: Boolean
-  logo: String
+  price: Float
+  sku: String
+  slug: String
+  stockQuantity: Int
+  subcategoryId: String
+  title: String
+}
+
+"""Input data for updating an existing product request"""
+input UpdateRequestInput {
+  """Array of Media asset UUID references for attachments"""
+  attachmentMediaIds: [String!]
+  budget: Float
+  deadline: DateTimeISO
+  description: String
+  location: String
+  quantity: Int
+  requiredWithinDays: Int
+  subcategoryId: String
+  title: String
+}
+
+"""Input data for updating a subcategory"""
+input UpdateSubcategoryInput {
+  description: String
+  displayOrder: Int
+  isActive: Boolean
   name: String
-  status: String
-  tag: String
-  url: String
+  slug: String
+}
+
+"""Input data for updating vendor profile"""
+input UpdateVendorProfileInput {
+  businessAddress: String
+  businessName: String
+  businessRegistrationNumber: String
+  city: String
+  country: String
+  description: String
+  postalCode: String
+  state: String
+}
+
+"""
+Base User entity representing identity, authentication, and core profile
+"""
+type User {
+  avatar: String
+  avatarMediaId: String
+  businessAddress: String
+  businessName: String
+  createdAt: DateTimeISO!
+  email: String
+  id: ID!
+  isActive: Boolean!
+  isEmailVerified: Boolean!
+  isPhoneVerified: Boolean!
+  isVendorVerified: Boolean!
+  name: String
+  phoneNumber: String
+  role: Role!
 }
 
 """User profile representation for all roles"""
@@ -96,12 +803,65 @@ type UserProfileType {
   businessAddress: String
   businessName: String
   createdAt: DateTimeISO!
-  email: String!
+  customer: CustomerSummaryType
+  email: String
   id: ID!
   isActive: Boolean!
   isEmailVerified: Boolean!
+  isPhoneVerified: Boolean
   isVendorVerified: Boolean!
   name: String!
   phoneNumber: String
   role: Role!
+  vendor: VendorSummaryType
+}
+
+"""Vendor profile entity for suppliers and sellers"""
+type VendorEntity {
+  businessAddress: String
+  businessName: String!
+  businessRegistrationNumber: String
+  city: String
+  country: String
+  createdAt: DateTimeISO!
+  description: String
+  id: ID!
+  isVerified: Boolean!
+  postalCode: String
+  rating: Float!
+  state: String
+  totalReviews: Int!
+  user: User!
+  userId: String!
+}
+
+"""Filter options for browsing vendors"""
+input VendorFilterInput {
+  search: String
+  verifiedOnly: Boolean
+}
+
+"""Vendor business statistics"""
+type VendorStatsType {
+  activeOffers: Int!
+  rating: Float!
+  totalOrders: Int!
+  totalProducts: Int!
+  totalReviews: Int!
+}
+
+"""Vendor details attached to user"""
+type VendorSummaryType {
+  businessAddress: String
+  businessName: String!
+  businessRegistrationNumber: String
+  city: String
+  country: String
+  description: String
+  id: ID!
+  isVerified: Boolean!
+  postalCode: String
+  rating: Float!
+  state: String
+  totalReviews: Int!
 }

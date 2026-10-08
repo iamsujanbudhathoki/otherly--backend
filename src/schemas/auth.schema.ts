@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  Matches,
   MinLength,
 } from 'class-validator';
 import { Role } from '../constants/appConstant';
@@ -122,4 +123,29 @@ export class AdminUpdateUserStatusSchema {
 export class AdminVerifyVendorSchema {
   @IsBoolean()
   isVerified!: boolean;
+}
+
+export class SendOtpSchema {
+  @IsString()
+  @IsNotEmpty({ message: 'Phone number is required' })
+  @Matches(/^\+?[0-9]{7,15}$/, {
+    message:
+      'Please provide a valid phone number with country code (e.g. +9779812345678)',
+  })
+  phoneNumber!: string;
+}
+
+export class VerifyOtpSchema {
+  @IsString()
+  @IsNotEmpty({ message: 'Phone number is required' })
+  @Matches(/^\+?[0-9]{7,15}$/, {
+    message:
+      'Please provide a valid phone number with country code (e.g. +9779812345678)',
+  })
+  phoneNumber!: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'OTP is required' })
+  @Matches(/^\d{6}$/, { message: 'OTP must be a 6-digit code' })
+  otp!: string;
 }

@@ -11,6 +11,7 @@ import { VendorEntity } from '../vendor/Vendor.entity';
 @Entity('vendor_offers')
 export class OfferEntity extends CommonEntity {
   @Field()
+  @Index()
   @Column({ name: 'request_id', type: 'uuid' })
   requestId: string;
 
@@ -23,6 +24,7 @@ export class OfferEntity extends CommonEntity {
   request: RequestEntity;
 
   @Field()
+  @Index()
   @Column({ name: 'vendor_id', type: 'uuid' })
   vendorId: string;
 

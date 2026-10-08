@@ -19,6 +19,16 @@ export interface ProductFilter {
   maxPrice?: number;
   inStockOnly?: boolean;
   activeOnly?: boolean;
+  page?: number;
+  limit?: number;
+}
+
+export interface PaginatedProductResult {
+  data: ProductEntity[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 @injectable()
@@ -61,7 +71,7 @@ export class ProductService {
     return await this.productRepo.save(product);
   }
 
-  async getAll(filter: ProductFilter = {}): Promise<ProductEntity[]> {
+  private buildQuery(filter: ProductFilter = {}) {
     const qb = this.productRepo
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.vendor', 'vendor')
@@ -111,7 +121,34 @@ export class ProductService {
       );
     }
 
+    return qb;
+  }
+
+  async getAll(filter: ProductFilter = {}): Promise<ProductEntity[]> {
+    const qb = this.buildQuery(filter);
+    const page = Math.max(1, filter.page || 1);
+    const limit = Math.min(100, Math.max(1, filter.limit || 30));
+    qb.skip((page - 1) * limit).take(limit);
+
     return await qb.getMany();
+  }
+
+  async getPaginated(
+    filter: ProductFilter = {},
+  ): Promise<PaginatedProductResult> {
+    const qb = this.buildQuery(filter);
+    const page = Math.max(1, filter.page || 1);
+    const limit = Math.min(100, Math.max(1, filter.limit || 30));
+    qb.skip((page - 1) * limit).take(limit);
+
+    const [data, total] = await qb.getManyAndCount();
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit) || 1,
+    };
   }
 
   async getBySlug(slug: string): Promise<ProductEntity> {

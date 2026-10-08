@@ -10,21 +10,33 @@ export class MediaHelper {
   static async getMediaById(
     mediaId?: string | null,
   ): Promise<Media | undefined> {
-    if (!mediaId) return undefined;
+    if (!mediaId) {
+      return undefined;
+    }
     const item = await this.mediaRepo.findOne({ where: { id: mediaId } });
-    return item ?? undefined;
+    if (!item) {
+      return undefined;
+    }
+    return item;
   }
 
   static async getMediaUrlById(
     mediaId?: string | null,
   ): Promise<string | undefined> {
-    if (!mediaId) return undefined;
+    if (!mediaId) {
+      return undefined;
+    }
     const item = await this.mediaRepo.findOne({ where: { id: mediaId } });
-    return item ? item.url : undefined;
+    if (!item) {
+      return undefined;
+    }
+    return item.url;
   }
 
   static async getMediaByIds(mediaIds?: string[] | null): Promise<Media[]> {
-    if (!mediaIds || mediaIds.length === 0) return [];
+    if (!mediaIds || mediaIds.length === 0) {
+      return [];
+    }
     return await this.mediaRepo.find({
       where: { id: In(mediaIds) },
     });
@@ -33,7 +45,9 @@ export class MediaHelper {
   static async getMediaUrlsByIds(
     mediaIds?: string[] | null,
   ): Promise<string[]> {
-    if (!mediaIds || mediaIds.length === 0) return [];
+    if (!mediaIds || mediaIds.length === 0) {
+      return [];
+    }
     const items = await this.mediaRepo.find({
       where: { id: In(mediaIds) },
     });

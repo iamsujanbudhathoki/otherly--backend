@@ -1,5 +1,7 @@
 allowBuilds:
   '@apollo/protobufjs': true
+  '@firebase/util': true
   '@scarf/scarf': false
+  protobufjs: true
 ignoredBuiltDependencies:
   - '@scarf/scarf'

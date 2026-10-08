@@ -2,6 +2,7 @@
 export * from './admin/Admin.entity';
 export * from './user/User.entity';
 export * from './token/Token.entity';
+export * from './otp/Otp.entity';
 
 // Marketplace Users & Profiles
 export * from './customer/Customer.entity';
@@ -23,3 +24,6 @@ export * from './order/Order.entity';
 export * from './media/media.entity';
 export * from './email/EmailLog.entity';
 export * from './contact-us/ContactUs.entity';
+
+// Notifications
+export * from './notification/Notification.entity';

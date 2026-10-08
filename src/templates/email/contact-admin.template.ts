@@ -47,7 +47,7 @@ export function buildContactAdminNotificationTemplate(
   `;
 
   const replySubject = encodeURIComponent(
-    `Re: [${payload.topic}] Your enquiry with Stradmont Solutions`,
+    `Re: [${payload.topic}] Your enquiry with Otherly`,
   );
 
   const html = renderBaseEmailLayout({
@@ -55,7 +55,7 @@ export function buildContactAdminNotificationTemplate(
     eyebrow: `Contact Enquiry · ${payload.topic}`,
     title: `New enquiry from ${payload.name}`,
     subtitle:
-      'A new contact enquiry has been submitted on stradmontsolutions.com and persisted to the database.',
+      'A new contact enquiry has been submitted on Otherly marketplace and persisted to the database.',
     bodyHtml,
     ctaLabel: `Reply to ${payload.name}`,
     ctaUrl: `mailto:${payload.email}?subject=${replySubject}`,
@@ -64,7 +64,7 @@ export function buildContactAdminNotificationTemplate(
   });
 
   const text = [
-    `STRADMONT SOLUTIONS — NEW CONTACT ENQUIRY (#${referenceId})`,
+    `OTHERLY — NEW CONTACT ENQUIRY (#${referenceId})`,
     `------------------------------------------------------------`,
     `Topic:    ${payload.topic}`,
     `Name:     ${payload.name}`,

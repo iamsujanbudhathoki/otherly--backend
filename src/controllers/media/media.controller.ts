@@ -1,5 +1,4 @@
 import express from 'express';
-import fs from 'fs';
 import path from 'path';
 import {
   Controller,
@@ -15,7 +14,6 @@ import {
   UploadedFile,
 } from 'tsoa';
 import { autoInjectable } from 'tsyringe';
-import { DotenvConfig } from '../../config/env.config';
 import { MediaType } from '../../constants/appConstant';
 import mediaService from '../../services/media/media.service';
 
@@ -30,8 +28,17 @@ class MediaController extends Controller {
     @UploadedFile() file: Express.Multer.File,
     @FormField() mediaType: string,
   ) {
+    if (!file) {
+      this.setStatus(400);
+      return {
+        status: 'error',
+        message: 'No file provided for upload',
+      };
+    }
+
     const validMediaTypeList = Object.values(MediaType);
     if (!validMediaTypeList.includes(mediaType as MediaType)) {
+      this.setStatus(400);
       return {
         status: 'error',
         message: 'Invalid Media Type',
@@ -39,28 +46,24 @@ class MediaController extends Controller {
     }
 
     const validateResponse = this.validate(file);
-    if (validateResponse !== true) return validateResponse;
-
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    const updatedFileName = uniqueSuffix + ext;
-
-    if (!fs.existsSync(DotenvConfig.MEDIA_TEMP_PATH)) {
-      fs.mkdirSync(DotenvConfig.MEDIA_TEMP_PATH, { recursive: true });
+    if (validateResponse !== true) {
+      this.setStatus(400);
+      return validateResponse;
     }
 
-    fs.writeFileSync(
-      path.resolve(DotenvConfig.MEDIA_TEMP_PATH, updatedFileName),
-      file.buffer,
-    );
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname).toLowerCase();
+    const updatedFileName = uniqueSuffix + ext;
 
     const media = await mediaService.uploadSingle(
       mediaType as MediaType,
       file.mimetype,
       updatedFileName,
       file.size,
+      file.buffer,
     );
 
+    this.setStatus(201);
     return {
       status: 'success',
       data: {

@@ -20,6 +20,7 @@ export class OrderEntity extends CommonEntity {
   orderNumber: string;
 
   @Field()
+  @Index()
   @Column({ name: 'customer_id', type: 'uuid' })
   customerId: string;
 
@@ -32,6 +33,7 @@ export class OrderEntity extends CommonEntity {
   customer: CustomerEntity;
 
   @Field()
+  @Index()
   @Column({ name: 'vendor_id', type: 'uuid' })
   vendorId: string;
 
@@ -44,6 +46,7 @@ export class OrderEntity extends CommonEntity {
   vendor: VendorEntity;
 
   @Field(() => OrderSourceType)
+  @Index()
   @Column({
     name: 'source_type',
     type: 'enum',
@@ -53,6 +56,7 @@ export class OrderEntity extends CommonEntity {
   sourceType: OrderSourceType;
 
   @Field({ nullable: true })
+  @Index()
   @Column({ name: 'product_id', type: 'uuid', nullable: true })
   productId?: string;
 

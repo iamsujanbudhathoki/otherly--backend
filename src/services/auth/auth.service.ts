@@ -1,15 +1,18 @@
 import { autoInjectable } from 'tsyringe';
 import { AppDataSource } from '../../config/database.config';
-import { DotenvConfig } from '../../config/env.config';
+import { DotenvConfig, Environment } from '../../config/env.config';
+import { logger } from '../../config/logger.config';
 import { Role, TokenEnum } from '../../constants/appConstant';
 import messages from '../../constants/messages.constants';
 import { Admin } from '../../entities/admin/Admin.entity';
 import { CustomerEntity } from '../../entities/customer/Customer.entity';
+import { OtpVerification } from '../../entities/otp/Otp.entity';
 import { Token, TokenOwnerType } from '../../entities/token/Token.entity';
 import { User } from '../../entities/user/User.entity';
 import { VendorEntity } from '../../entities/vendor/Vendor.entity';
 import {
   AuthResponse,
+  SendOtpResponse,
   TokenResponse,
   UserProfileResponse,
 } from '../../interfaces/auth.interface';
@@ -33,6 +36,7 @@ export class AuthService {
   private vendorRepo = AppDataSource.getRepository(VendorEntity);
   private adminRepo = AppDataSource.getRepository(Admin);
   private tokenRepo = AppDataSource.getRepository(Token);
+  private otpRepo = AppDataSource.getRepository(OtpVerification);
 
   private async sanitizeUser(user: User): Promise<UserProfileResponse> {
     let customer = user.customer;
@@ -51,10 +55,13 @@ export class AuthService {
 
     return {
       id: user.id,
-      name: user.name,
-      email: user.email,
+      name:
+        user.name ||
+        (user.phoneNumber ? `User ${user.phoneNumber.slice(-4)}` : 'User'),
+      email: user.email || '',
       role: user.role,
       isEmailVerified: user.isEmailVerified,
+      isPhoneVerified: user.isPhoneVerified ?? !!user.phoneNumber,
       isVendorVerified: vendor ? vendor.isVerified : user.isVendorVerified,
       isActive: user.isActive,
       phoneNumber: user.phoneNumber,
@@ -148,7 +155,7 @@ export class AuthService {
     const verificationToken = JwtUtil.sign(
       {
         sub: savedUser.id,
-        email: savedUser.email,
+        email: savedUser.email!,
         role: savedUser.role,
       },
       86400,
@@ -164,8 +171,8 @@ export class AuthService {
 
     // Send verification email
     const verificationUrl = `${DotenvConfig.FRONTEND_BASE_URL}/verify-email?token=${verificationToken}`;
-    await emailUtil.sendVerificationEmail(savedUser.email, {
-      name: savedUser.name,
+    await emailUtil.sendVerificationEmail(savedUser.email!, {
+      name: savedUser.name || 'User',
       verificationUrl,
     });
 
@@ -221,7 +228,7 @@ export class AuthService {
     const verificationToken = JwtUtil.sign(
       {
         sub: user.id,
-        email: user.email,
+        email: user.email!,
         role: user.role,
       },
       86400,
@@ -249,43 +256,155 @@ export class AuthService {
     }
 
     const verificationUrl = `${DotenvConfig.FRONTEND_BASE_URL}/verify-email?token=${verificationToken}`;
-    await emailUtil.sendVerificationEmail(user.email, {
-      name: user.name,
+    await emailUtil.sendVerificationEmail(user.email!, {
+      name: user.name || 'User',
       verificationUrl,
     });
   }
 
-  async login(data: LoginSchema): Promise<AuthResponse> {
-    const email = data.email.trim().toLowerCase();
+  async sendOtp(rawPhoneNumber: string): Promise<SendOtpResponse> {
+    const phoneNumber = rawPhoneNumber.replace(/\s+/g, '').trim();
 
-    // Check in users table
-    const user = await this.userRepo
+    // Check cooldown: 60 seconds
+    const existingOtp = await this.otpRepo.findOne({
+      where: {
+        phoneNumber,
+        isUsed: false,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+
+    if (
+      existingOtp &&
+      existingOtp.cooldownUntil &&
+      existingOtp.cooldownUntil.getTime() > Date.now()
+    ) {
+      const remainingSeconds = Math.ceil(
+        (existingOtp.cooldownUntil.getTime() - Date.now()) / 1000,
+      );
+      if (remainingSeconds > 0) {
+        throw AppError.badRequest(
+          `Please wait ${remainingSeconds} seconds before requesting another code.`,
+        );
+      }
+    }
+
+    // Invalidate prior unused OTPs for this phone number
+    await this.otpRepo.update({ phoneNumber, isUsed: false }, { isUsed: true });
+
+    // Generate random 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const cooldownSeconds = 60;
+    const cooldownUntil = new Date(Date.now() + cooldownSeconds * 1000);
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiration
+
+    const otpRecord = this.otpRepo.create({
+      phoneNumber,
+      otp,
+      cooldownUntil,
+      expiresAt,
+      isUsed: false,
+      attempts: 0,
+    });
+
+    await this.otpRepo.save(otpRecord);
+
+    logger.info(
+      `[AUTH] Mobile verification code generated for ${phoneNumber}: ${otp}`,
+    );
+
+    const isDevelopment = DotenvConfig.NODE_ENV !== Environment.PRODUCTION;
+
+    return {
+      cooldownSeconds,
+      ...(isDevelopment ? { otp } : {}),
+    };
+  }
+
+  async verifyOtp(
+    rawPhoneNumber: string,
+    inputOtp: string,
+  ): Promise<AuthResponse> {
+    const phoneNumber = rawPhoneNumber.replace(/\s+/g, '').trim();
+    const otp = inputOtp.trim();
+
+    const otpRecord = await this.otpRepo.findOne({
+      where: {
+        phoneNumber,
+        isUsed: false,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+
+    if (!otpRecord || otpRecord.expiresAt.getTime() < Date.now()) {
+      throw AppError.badRequest(
+        'Verification code has expired or was not requested. Please request a new code.',
+      );
+    }
+
+    if (otpRecord.attempts >= 5) {
+      otpRecord.isUsed = true;
+      await this.otpRepo.save(otpRecord);
+      throw AppError.badRequest(
+        'Too many failed attempts. Please request a new verification code.',
+      );
+    }
+
+    if (otpRecord.otp !== otp) {
+      otpRecord.attempts += 1;
+      await this.otpRepo.save(otpRecord);
+      throw AppError.badRequest('Invalid verification code.');
+    }
+
+    // Mark OTP as used
+    otpRecord.isUsed = true;
+    await this.otpRepo.save(otpRecord);
+
+    // Check if user exists with this phone number
+    let user = await this.userRepo
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.customer', 'customer')
       .leftJoinAndSelect('user.vendor', 'vendor')
-      .addSelect('user.password')
-      .where('user.email = :email', { email })
+      .where('user.phoneNumber = :phoneNumber', { phoneNumber })
       .getOne();
 
     if (!user) {
-      throw AppError.unAuthorized(messages.invalidAuth);
-    }
+      // Auto-register user as Customer
+      const suffix =
+        phoneNumber.length >= 4 ? phoneNumber.slice(-4) : phoneNumber;
+      user = this.userRepo.create({
+        phoneNumber,
+        name: `User ${suffix}`,
+        role: Role.CUSTOMER,
+        isActive: true,
+        isEmailVerified: false,
+        isPhoneVerified: true,
+      });
 
-    if (!user.isActive) {
-      throw AppError.forbidden(messages.unAuthorized);
-    }
+      user = await this.userRepo.save(user);
 
-    const isPasswordValid = await BcryptService.compare(
-      data.password,
-      user.password,
-    );
-    if (!isPasswordValid) {
-      throw AppError.unAuthorized(messages.invalidAuth);
+      const customer = this.customerRepo.create({
+        userId: user.id,
+      });
+      await this.customerRepo.save(customer);
+      user.customer = customer;
+    } else {
+      if (!user.isActive) {
+        throw AppError.forbidden(messages.unAuthorized);
+      }
+      if (!user.isPhoneVerified) {
+        user.isPhoneVerified = true;
+        await this.userRepo.save(user);
+      }
     }
 
     const tokenPayload = {
       sub: user.id,
-      email: user.email,
+      email: user.email || '',
       role: user.role,
     };
 
@@ -328,6 +447,102 @@ export class AuthService {
     };
   }
 
+  async login(data: LoginSchema): Promise<AuthResponse> {
+    const email = data.email.trim().toLowerCase();
+
+    // Check if an admin account is attempting to log in
+    const admin = await this.adminRepo
+      .createQueryBuilder('admin')
+      .addSelect('admin.password')
+      .where('admin.email = :email', { email })
+      .getOne();
+
+    if (admin) {
+      if (!admin.isActive) {
+        throw AppError.forbidden(messages.unAuthorized);
+      }
+
+      const isPasswordValid = await BcryptService.compare(
+        data.password,
+        admin.password,
+      );
+      if (!isPasswordValid) {
+        throw AppError.unAuthorized(messages.invalidAuth);
+      }
+
+      const tokenPayload = {
+        sub: admin.id,
+        email: admin.email,
+        role: admin.role,
+        permissions: admin.permissions || [],
+      };
+
+      const accessToken = JwtUtil.sign(
+        tokenPayload,
+        DotenvConfig.JWT_ACCESS_EXPIRES_SECONDS,
+      );
+      const refreshToken = JwtUtil.sign(
+        tokenPayload,
+        DotenvConfig.JWT_REFRESH_EXPIRES_SECONDS,
+      );
+
+      const existingToken = await this.tokenRepo.findOne({
+        where: {
+          ownerId: admin.id,
+          ownerType: TokenOwnerType.ADMIN,
+          type: TokenEnum.REFRESH_TOKEN,
+        },
+      });
+
+      if (existingToken) {
+        existingToken.token = refreshToken;
+        await this.tokenRepo.save(existingToken);
+      } else {
+        const newToken = this.tokenRepo.create({
+          ownerId: admin.id,
+          ownerType: TokenOwnerType.ADMIN,
+          type: TokenEnum.REFRESH_TOKEN,
+          token: refreshToken,
+        });
+        await this.tokenRepo.save(newToken);
+      }
+
+      return {
+        user: {
+          id: admin.id,
+          name: admin.name,
+          email: admin.email,
+          role: admin.role,
+          isEmailVerified: true,
+          isPhoneVerified: true,
+          isVendorVerified: false,
+          isActive: admin.isActive,
+          createdAt: admin.createdAt,
+        },
+        accessToken,
+        refreshToken,
+      };
+    }
+
+    // Check in users table
+    const user = await this.userRepo
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.customer', 'customer')
+      .leftJoinAndSelect('user.vendor', 'vendor')
+      .addSelect('user.password')
+      .where('user.email = :email', { email })
+      .getOne();
+
+    if (user) {
+      // Regular customer/vendor accounts must use OTP flow
+      throw AppError.forbidden(
+        'Email and password login is restricted to administrators. Please login using mobile OTP verification.',
+      );
+    }
+
+    throw AppError.unAuthorized(messages.invalidAuth);
+  }
+
   async refreshToken(refreshTokenStr: string): Promise<TokenResponse> {
     let payload: JwtPayload;
     try {
@@ -355,7 +570,7 @@ export class AuthService {
 
     const tokenPayload = {
       sub: user.id,
-      email: user.email,
+      email: user.email || '',
       role: user.role,
     };
 
@@ -409,6 +624,10 @@ export class AuthService {
       throw AppError.notFound(messages.userNotFound);
     }
 
+    if (!user.password) {
+      throw AppError.badRequest('No password is set for this account.');
+    }
+
     const isOldValid = await BcryptService.compare(
       data.oldPassword,
       user.password,
@@ -440,7 +659,7 @@ export class AuthService {
     const resetToken = JwtUtil.sign(
       {
         sub: user.id,
-        email: user.email,
+        email: user.email!,
         role: user.role,
       },
       3600, // 1 hour
@@ -467,8 +686,8 @@ export class AuthService {
     }
 
     const resetUrl = `${DotenvConfig.FRONTEND_BASE_URL}/reset-password?token=${resetToken}`;
-    await emailUtil.sendPasswordResetEmail(user.email, {
-      name: user.name,
+    await emailUtil.sendPasswordResetEmail(user.email!, {
+      name: user.name || 'User',
       resetUrl,
     });
   }

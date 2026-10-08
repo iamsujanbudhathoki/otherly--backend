@@ -1,3 +1,5 @@
+import { DotenvConfig } from '../../config/env.config';
+
 export interface BaseEmailLayoutOptions {
   preheader: string;
   eyebrow: string;
@@ -46,7 +48,7 @@ export function renderBaseEmailLayout(options: BaseEmailLayoutOptions): string {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light" />
     <meta name="supported-color-schemes" content="light" />
-    <title>${escapeHtml(title)} — Stradmont Solutions</title>
+    <title>${escapeHtml(title)} — Otherly</title>
   </head>
   <body style="margin: 0; padding: 0; background-color: #f8f7fc; font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e1b4b; -webkit-font-smoothing: antialiased;">
     <!-- Hidden preheader text -->
@@ -64,12 +66,12 @@ export function renderBaseEmailLayout(options: BaseEmailLayoutOptions): string {
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                   <tr>
                     <td align="left" style="vertical-align: middle;">
-                      <a href="https://stradmontsolutions.com" target="_blank" style="text-decoration: none; color: #1e1b4b; font-size: 16px; font-weight: 800; letter-spacing: -0.02em;">
-                        STRADMONT <span style="color: #7c3aed; font-weight: 600;">SOLUTIONS</span>
+                      <a href="${DotenvConfig.FRONTEND_BASE_URL}" target="_blank" style="text-decoration: none; color: #1e1b4b; font-size: 18px; font-weight: 800; letter-spacing: -0.02em;">
+                        OTHERLY <span style="color: #7c3aed; font-weight: 600;">MARKETPLACE</span>
                       </a>
                     </td>
                     <td align="right" style="vertical-align: middle; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #64748b;">
-                      Systems over chaos
+                      Reverse Commerce
                     </td>
                   </tr>
                 </table>
@@ -140,20 +142,18 @@ export function renderBaseEmailLayout(options: BaseEmailLayoutOptions): string {
             <tr>
               <td align="center" style="padding: 28px 16px 8px 16px; font-size: 12px; line-height: 1.6; color: #64748b;">
                 <p style="margin: 0 0 6px 0; font-weight: 600; color: #1e1b4b;">
-                  Stradmont Solutions
+                  Otherly Marketplace
                 </p>
                 <p style="margin: 0 0 12px 0;">
-                  We find the chaos in technology and finance operations, and build the systems that end it.
+                  The modern reverse-commerce platform connecting buyers with verified suppliers.
                 </p>
                 <p style="margin: 0 0 12px 0;">
-                  <a href="https://stradmontsolutions.com" style="color: #7c3aed; text-decoration: none; font-weight: 600;">stradmontsolutions.com</a>
+                  <a href="${DotenvConfig.FRONTEND_BASE_URL}" style="color: #7c3aed; text-decoration: none; font-weight: 600;">otherly.com</a>
                   &nbsp;&middot;&nbsp;
-                  <a href="mailto:info@stradmontsolutions.com" style="color: #64748b; text-decoration: none;">info@stradmontsolutions.com</a>
-                  &nbsp;&middot;&nbsp;
-                  <span style="color: #64748b;">+1 (226) 975-1978</span>
+                  <a href="mailto:info@otherly.com" style="color: #64748b; text-decoration: none;">info@otherly.com</a>
                 </p>
                 <p style="margin: 0; font-size: 11px; color: #94a3b8;">
-                  &copy; ${currentYear} Stradmont Solutions. All rights reserved.
+                  &copy; ${currentYear} Otherly. All rights reserved.
                 </p>
               </td>
             </tr>

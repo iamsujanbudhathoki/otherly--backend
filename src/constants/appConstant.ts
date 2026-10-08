@@ -14,7 +14,6 @@ export enum Environment {
 
 export enum MediaType {
   PRODUCT_IMAGE = 'PRODUCT_IMAGE',
-  LETTER_COVER = 'LETTER_COVER',
   AVATAR = 'AVATAR',
   CATEGORY_ICON = 'CATEGORY_ICON',
   CATEGORY_BANNER = 'CATEGORY_BANNER',
@@ -48,12 +47,6 @@ export enum ContactStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   RESOLVED = 'RESOLVED',
   ARCHIVED = 'ARCHIVED',
-}
-
-export enum LetterKind {
-  LETTER = 'Letter',
-  NOTE = 'Note',
-  STUDY = 'Study',
 }
 
 export enum MailType {
@@ -103,4 +96,17 @@ export enum OrderStatus {
 export enum OrderSourceType {
   DIRECT_PURCHASE = 'DIRECT_PURCHASE',
   REQUEST_OFFER = 'REQUEST_OFFER',
+}
+
+export enum NotificationType {
+  ORDER_CREATED = 'ORDER_CREATED',
+  ORDER_STATUS_CHANGED = 'ORDER_STATUS_CHANGED',
+  ORDER_CANCELLED = 'ORDER_CANCELLED',
+  OFFER_RECEIVED = 'OFFER_RECEIVED',
+  OFFER_ACCEPTED = 'OFFER_ACCEPTED',
+  OFFER_REJECTED = 'OFFER_REJECTED',
+  REQUEST_FULFILLED = 'REQUEST_FULFILLED',
+  VENDOR_VERIFIED = 'VENDOR_VERIFIED',
+  SYSTEM_ALERT = 'SYSTEM_ALERT',
+  GENERAL = 'GENERAL',
 }

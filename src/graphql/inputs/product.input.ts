@@ -191,4 +191,16 @@ export class ProductFilterInput {
   @IsOptional()
   @IsBoolean()
   activeOnly?: boolean;
+
+  @Field(() => Int, { nullable: true, defaultValue: 1 })
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  page?: number;
+
+  @Field(() => Int, { nullable: true, defaultValue: 30 })
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  limit?: number;
 }

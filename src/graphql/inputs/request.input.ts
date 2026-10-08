@@ -151,4 +151,16 @@ export class RequestFilterInput {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @Field(() => Int, { nullable: true, defaultValue: 1 })
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  page?: number;
+
+  @Field(() => Int, { nullable: true, defaultValue: 30 })
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  limit?: number;
 }

@@ -20,6 +20,7 @@ import {
   ProductFilterInput,
   UpdateProductInput,
 } from '../inputs/product.input';
+import { PaginatedProductsType } from '../types/paginated-product.type';
 
 @injectable()
 @Resolver(() => ProductEntity)
@@ -30,14 +31,13 @@ export class ProductResolver {
     description: 'Centralized public URLs of product images',
   })
   async imageUrls(@Root() product: ProductEntity): Promise<string[]> {
-    const ids =
-      product.imageMediaIds && product.imageMediaIds.length > 0
-        ? product.imageMediaIds
-        : [];
-    if (ids.length > 0) {
-      return await MediaHelper.getMediaUrlsByIds(ids);
+    if (product.imageMediaIds && product.imageMediaIds.length > 0) {
+      return await MediaHelper.getMediaUrlsByIds(product.imageMediaIds);
     }
-    return product.images || [];
+    if (product.images && product.images.length > 0) {
+      return product.images;
+    }
+    return [];
   }
 
   @FieldResolver(() => [Media], {
@@ -45,12 +45,8 @@ export class ProductResolver {
     description: 'Centralized Media asset objects for product images',
   })
   async media(@Root() product: ProductEntity): Promise<Media[]> {
-    const ids =
-      product.imageMediaIds && product.imageMediaIds.length > 0
-        ? product.imageMediaIds
-        : [];
-    if (ids.length > 0) {
-      return await MediaHelper.getMediaByIds(ids);
+    if (product.imageMediaIds && product.imageMediaIds.length > 0) {
+      return await MediaHelper.getMediaByIds(product.imageMediaIds);
     }
     return [];
   }
@@ -63,6 +59,18 @@ export class ProductResolver {
     @Arg('filter', { nullable: true }) filter?: ProductFilterInput,
   ): Promise<ProductEntity[]> {
     return await this.productService.getAll(filter || {});
+  }
+
+  @Query(() => PaginatedProductsType, {
+    description:
+      'Browse products with pagination metadata (total, totalPages, page, limit)',
+  })
+  async paginatedProducts(
+    @Arg('filter', { nullable: true }) filter?: ProductFilterInput,
+  ): Promise<PaginatedProductsType> {
+    return (await this.productService.getPaginated(
+      filter || {},
+    )) as unknown as PaginatedProductsType;
   }
 
   @Query(() => ProductEntity, {

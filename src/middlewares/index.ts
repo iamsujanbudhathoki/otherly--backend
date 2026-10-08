@@ -19,6 +19,9 @@ export const configMiddleware = (
   app: express.Application,
   apolloServer?: ApolloServer<GraphQLContext>,
 ) => {
+  // Trust first proxy (essential for Docker, Nginx, Cloudflare, ALB in production)
+  app.set('trust proxy', 1);
+
   // 1. HTTP Security Headers via Helmet
   app.use(
     helmet({
@@ -37,15 +40,19 @@ export const configMiddleware = (
   });
 
   // 3. CORS Configuration
+  const configuredOrigins = DotenvConfig.FRONTEND_BASE_URL.split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
   const allowedOrigins: (string | RegExp)[] =
     DotenvConfig.NODE_ENV === Environment.PRODUCTION
-      ? [DotenvConfig.FRONTEND_BASE_URL]
+      ? configuredOrigins
       : [
           'http://localhost:3000',
           'http://localhost:3001',
           'http://localhost:4000',
           'http://localhost:5173',
-          DotenvConfig.FRONTEND_BASE_URL,
+          ...configuredOrigins,
         ];
 
   app.use(
@@ -107,6 +114,8 @@ export const configMiddleware = (
   });
   app.use('/api/v1/auth/login', authLimiter);
   app.use('/api/v1/auth/register', authLimiter);
+  app.use('/api/v1/auth/otp/send', authLimiter);
+  app.use('/api/v1/auth/otp/verify', authLimiter);
   app.use('/api/v1/auth/forgot-password', authLimiter);
   app.use('/api/v1/auth/reset-password', authLimiter);
   app.use('/api/v1/admin/auth/login', authLimiter);
@@ -174,11 +183,6 @@ export const configMiddleware = (
   if (DotenvConfig.NODE_ENV === Environment.DEVELOPMENT) {
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     app.get('/swagger-json', (_req, res) => res.json(swaggerDocument));
-  }
-
-  // Static uploads
-  if (DotenvConfig.MEDIA_UPLOAD_PATH) {
-    app.use(express.static(DotenvConfig.MEDIA_UPLOAD_PATH));
   }
 
   // Register REST routes and error handling

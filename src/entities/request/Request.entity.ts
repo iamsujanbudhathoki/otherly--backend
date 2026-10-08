@@ -20,6 +20,7 @@ import type { OfferEntity } from '../offer/Offer.entity';
 @Entity('customer_requests')
 export class RequestEntity extends CommonEntity {
   @Field()
+  @Index()
   @Column({ name: 'customer_id', type: 'uuid' })
   customerId: string;
 
@@ -32,6 +33,7 @@ export class RequestEntity extends CommonEntity {
   customer: CustomerEntity;
 
   @Field({ nullable: true })
+  @Index()
   @Column({ name: 'subcategory_id', type: 'uuid', nullable: true })
   subcategoryId?: string;
 

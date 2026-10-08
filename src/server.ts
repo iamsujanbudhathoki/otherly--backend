@@ -7,9 +7,9 @@ import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHt
 import { AppDataSource } from './config/database.config';
 import { DotenvConfig, Environment } from './config/env.config';
 import { GraphQLContext } from './graphql/context';
+import { formatGraphQLError } from './graphql/formatError';
 import { createGraphQLSchema } from './graphql/schema';
 import { configMiddleware } from './middlewares';
-import { PathUtils } from './utils/path.util';
 import { RedisUtil } from './utils/redis.util';
 
 class Server {
@@ -18,7 +18,6 @@ class Server {
   }
 
   async bootstrap() {
-    await this.initializePath();
     AppDataSource.initialize()
       .then(async () => {
         console.log('Data Source has been initialized!');
@@ -34,18 +33,8 @@ class Server {
           plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
           validationRules: [depthLimit(7)],
           introspection: DotenvConfig.NODE_ENV !== Environment.PRODUCTION,
-          formatError: (formattedError) => {
-            if (DotenvConfig.NODE_ENV === Environment.PRODUCTION) {
-              return {
-                message: formattedError.message || 'Internal server error',
-                extensions: {
-                  code:
-                    formattedError.extensions?.code || 'INTERNAL_SERVER_ERROR',
-                },
-              };
-            }
-            return formattedError;
-          },
+          formatError: (formattedError, error) =>
+            formatGraphQLError(formattedError, error),
         });
         await apolloServer.start();
 
@@ -80,15 +69,24 @@ class Server {
 
         process.on('SIGTERM', () => handleShutdown('SIGTERM'));
         process.on('SIGINT', () => handleShutdown('SIGINT'));
+
+        process.on('unhandledRejection', (reason, promise) => {
+          console.error(
+            'Unhandled Promise Rejection at:',
+            promise,
+            'reason:',
+            reason,
+          );
+        });
+
+        process.on('uncaughtException', (error) => {
+          console.error('Uncaught Exception thrown:', error);
+        });
       })
       .catch((err) => {
         console.error('Error during Data Source initialization', err);
+        process.exit(1);
       });
-  }
-
-  async initializePath() {
-    await PathUtils.ensureDir(DotenvConfig.MEDIA_TEMP_PATH);
-    await PathUtils.ensureDir(DotenvConfig.MEDIA_UPLOAD_PATH);
   }
 }
 

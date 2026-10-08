@@ -2,8 +2,8 @@ import { registerEnumType } from 'type-graphql';
 import {
   ContactStatus,
   ContactTopic,
-  LetterKind,
   MediaType,
+  NotificationType,
   OfferFulfillType,
   OfferStatus,
   OrderSourceType,
@@ -34,11 +34,6 @@ export function registerEnums(): void {
     description: 'Status of incoming contact requests',
   });
 
-  registerEnumType(LetterKind, {
-    name: 'LetterKind',
-    description: 'Newsletter/letter kinds',
-  });
-
   registerEnumType(MediaType, {
     name: 'MediaType',
     description: 'Types of uploaded media',
@@ -67,5 +62,10 @@ export function registerEnums(): void {
   registerEnumType(OrderSourceType, {
     name: 'OrderSourceType',
     description: 'Source origin of the order (Direct product or reverse offer)',
+  });
+
+  registerEnumType(NotificationType, {
+    name: 'NotificationType',
+    description: 'Types of in-app user notifications',
   });
 }

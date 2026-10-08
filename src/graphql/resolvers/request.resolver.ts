@@ -20,6 +20,7 @@ import {
   RequestFilterInput,
   UpdateRequestInput,
 } from '../inputs/request.input';
+import { PaginatedRequestsType } from '../types/paginated-request.type';
 
 @injectable()
 @Resolver(() => RequestEntity)
@@ -58,6 +59,18 @@ export class RequestResolver {
     return await this.requestService.getAll(filter || {});
   }
 
+  @Query(() => PaginatedRequestsType, {
+    description:
+      'Browse customer requests with pagination metadata (total, totalPages, page, limit)',
+  })
+  async paginatedRequests(
+    @Arg('filter', { nullable: true }) filter?: RequestFilterInput,
+  ): Promise<PaginatedRequestsType> {
+    return (await this.requestService.getPaginated(
+      filter || {},
+    )) as unknown as PaginatedRequestsType;
+  }
+
   @Query(() => RequestEntity, {
     nullable: true,
     description: 'Retrieve a customer request by ID',
@@ -75,6 +88,18 @@ export class RequestResolver {
     description: 'Retrieve all requests posted by the authenticated customer',
   })
   async myCustomerRequests(
+    @Ctx() { user }: GraphQLContext,
+    @Arg('status', () => RequestStatus, { nullable: true })
+    status?: RequestStatus,
+  ): Promise<RequestEntity[]> {
+    return await this.requestService.getCustomerRequests(user!.sub, status);
+  }
+
+  @Authorized([Role.CUSTOMER])
+  @Query(() => [RequestEntity], {
+    description: 'Retrieve all requests posted by the authenticated customer',
+  })
+  async myRequests(
     @Ctx() { user }: GraphQLContext,
     @Arg('status', () => RequestStatus, { nullable: true })
     status?: RequestStatus,

@@ -96,7 +96,7 @@ class EmailUtil {
 
     try {
       const info = await this.transporter.sendMail({
-        from: `"Stradmont Solutions" <${DotenvConfig.MAIL_FROM}>`,
+        from: `"Otherly" <${DotenvConfig.MAIL_FROM}>`,
         to,
         replyTo: replyTo || DotenvConfig.MAIL_FROM,
         subject: template.subject,
@@ -235,7 +235,7 @@ class EmailUtil {
 
     try {
       const info = await this.transporter.sendMail({
-        from: `"Stradmont Solutions" <${DotenvConfig.MAIL_FROM}>`,
+        from: `"Otherly" <${DotenvConfig.MAIL_FROM}>`,
         to: emailLog.recipient,
         replyTo: emailLog.replyTo || DotenvConfig.MAIL_FROM,
         subject: emailLog.subject,

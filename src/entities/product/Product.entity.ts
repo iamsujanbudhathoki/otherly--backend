@@ -8,6 +8,7 @@ import { VendorEntity } from '../vendor/Vendor.entity';
 @Entity('products')
 export class ProductEntity extends CommonEntity {
   @Field()
+  @Index()
   @Column({ name: 'vendor_id', type: 'uuid' })
   vendorId: string;
 
@@ -20,6 +21,7 @@ export class ProductEntity extends CommonEntity {
   vendor: VendorEntity;
 
   @Field({ nullable: true })
+  @Index()
   @Column({ name: 'subcategory_id', type: 'uuid', nullable: true })
   subcategoryId?: string;
 
@@ -79,6 +81,7 @@ export class ProductEntity extends CommonEntity {
   sku?: string;
 
   @Field()
+  @Index()
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 }

@@ -9,14 +9,14 @@ export function buildContactUserAcknowledgementTemplate(
   payload: ContactEmailTemplatePayload,
 ): RenderedEmailTemplate {
   const referenceId = payload.id ? payload.id.slice(0, 8).toUpperCase() : 'NEW';
-  const subject = `We received your enquiry — Stradmont Solutions (#${referenceId})`;
+  const subject = `We received your enquiry — Otherly (#${referenceId})`;
 
   const bodyHtml = `
     <p style="margin: 0 0 16px 0;">
       Hello <strong>${escapeHtml(payload.name)}</strong>,
     </p>
     <p style="margin: 0 0 20px 0;">
-      Thank you for reaching out to <strong>Stradmont Solutions</strong> regarding <strong>${escapeHtml(payload.topic)}</strong>. Every enquiry is read by a person on our team, and we will respond to you shortly.
+      Thank you for reaching out to <strong>Otherly</strong> regarding <strong>${escapeHtml(payload.topic)}</strong>. Every enquiry is read by a person on our team, and we will respond to you shortly.
     </p>
 
     <div style="background-color: #faf5ff; border: 1px solid #e9d5ff; border-radius: 14px; padding: 18px 20px; margin-bottom: 20px;">
@@ -36,20 +36,20 @@ export function buildContactUserAcknowledgementTemplate(
   `;
 
   const html = renderBaseEmailLayout({
-    preheader: `Thank you for contacting Stradmont Solutions. Reference #${referenceId}.`,
+    preheader: `Thank you for contacting Otherly. Reference #${referenceId}.`,
     eyebrow: 'Enquiry Received',
     title: `Thank you, ${payload.name}.`,
-    subtitle: 'Your message is with the Stradmont team.',
+    subtitle: 'Your message has been received by our support team.',
     bodyHtml,
-    ctaLabel: 'Read Stradmont Letters',
-    ctaUrl: 'https://stradmontsolutions.com/letters',
+    ctaLabel: 'Visit Otherly Marketplace',
+    ctaUrl: 'https://otherly.com',
     footerNote: `Reference ID: #${referenceId} · Sent to ${payload.email}`,
   });
 
   const text = [
     `Hello ${payload.name},`,
     ``,
-    `Thank you for reaching out to Stradmont Solutions regarding "${payload.topic}".`,
+    `Thank you for reaching out to Otherly regarding "${payload.topic}".`,
     `Every enquiry is read by a person on our team, and we will get back to you shortly.`,
     ``,
     `Reference ID: #${referenceId}`,
@@ -60,8 +60,8 @@ export function buildContactUserAcknowledgementTemplate(
     payload.message,
     ``,
     `—`,
-    `Stradmont Solutions | Systems over chaos`,
-    `https://stradmontsolutions.com`,
+    `Otherly | Reverse Commerce Marketplace`,
+    `https://otherly.com`,
   ]
     .filter((line) => line !== null)
     .join('\n');

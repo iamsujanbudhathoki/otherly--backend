@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 import { AppDataSource } from '../../config/database.config';
 import {
+  NotificationType,
   OrderSourceType,
   OrderStatus,
   Role,
@@ -9,6 +10,7 @@ import { CustomerEntity } from '../../entities/customer/Customer.entity';
 import { OrderEntity } from '../../entities/order/Order.entity';
 import { ProductEntity } from '../../entities/product/Product.entity';
 import { VendorEntity } from '../../entities/vendor/Vendor.entity';
+import { NotificationService } from '../notification/notification.service';
 import { AppError } from '../../utils/appError.util';
 
 export interface CreateDirectOrderDto {
@@ -24,6 +26,8 @@ export class OrderService {
   private productRepo = AppDataSource.getRepository(ProductEntity);
   private customerRepo = AppDataSource.getRepository(CustomerEntity);
   private vendorRepo = AppDataSource.getRepository(VendorEntity);
+
+  constructor(private notificationService?: NotificationService) {}
 
   async createDirectOrder(
     customerUserId: string,
@@ -50,10 +54,12 @@ export class OrderService {
       );
     }
 
-    return await AppDataSource.transaction(async (manager) => {
+    const targetProduct = product;
+
+    const savedOrder = await AppDataSource.transaction(async (manager) => {
       // Deduct inventory
-      product.stockQuantity -= data.quantity;
-      await manager.save(ProductEntity, product);
+      targetProduct.stockQuantity -= data.quantity;
+      await manager.save(ProductEntity, targetProduct);
 
       const orderNumber = `ORD-DIR-${Date.now().toString(36).toUpperCase()}-${Math.floor(
         1000 + Math.random() * 9000,
@@ -77,6 +83,24 @@ export class OrderService {
 
       return await manager.save(OrderEntity, order);
     });
+
+    // Notify vendor of incoming direct order
+    try {
+      if (targetProduct.vendor?.userId) {
+        await this.notificationService?.create({
+          userId: targetProduct.vendor.userId,
+          type: NotificationType.ORDER_CREATED,
+          title: 'New Order Received',
+          message: `New direct order #${savedOrder.orderNumber} placed for "${targetProduct.title}" (${data.quantity} pcs).`,
+          entityType: 'order',
+          entityId: savedOrder.id,
+        });
+      }
+    } catch {
+      // Non-blocking notification
+    }
+
+    return savedOrder;
   }
 
   async getCustomerOrders(customerUserId: string): Promise<OrderEntity[]> {
@@ -159,7 +183,7 @@ export class OrderService {
   ): Promise<OrderEntity> {
     const order = await this.orderRepo.findOne({
       where: { id: orderId },
-      relations: ['vendor'],
+      relations: ['vendor', 'customer'],
     });
     if (!order) {
       throw AppError.notFound('Order not found');
@@ -173,7 +197,25 @@ export class OrderService {
     }
 
     order.status = newStatus;
-    return await this.orderRepo.save(order);
+    const updatedOrder = await this.orderRepo.save(order);
+
+    // Notify customer
+    try {
+      if (order.customer?.userId) {
+        await this.notificationService?.create({
+          userId: order.customer.userId,
+          type: NotificationType.ORDER_STATUS_CHANGED,
+          title: 'Order Status Updated',
+          message: `Your order #${order.orderNumber} status has been updated to "${newStatus}".`,
+          entityType: 'order',
+          entityId: order.id,
+        });
+      }
+    } catch {
+      // Non-blocking notification
+    }
+
+    return updatedOrder;
   }
 
   async cancelOrder(

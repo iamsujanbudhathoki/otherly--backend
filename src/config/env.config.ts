@@ -9,65 +9,108 @@ export enum Environment {
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
+function getRequired(name: string): string {
+  const value = process.env[name];
+  if (!value || value.trim() === '') {
+    throw new Error(
+      `Configuration Error: Required environment variable "${name}" is missing.`,
+    );
+  }
+  return value.trim();
+}
+
+function getRequiredNumber(name: string): number {
+  const raw = getRequired(name);
+  const parsed = Number(raw);
+  if (isNaN(parsed)) {
+    throw new Error(
+      `Configuration Error: Environment variable "${name}" must be a valid number, got "${raw}".`,
+    );
+  }
+  return parsed;
+}
+
+function getRequiredBoolean(name: string): boolean {
+  const raw = getRequired(name).toLowerCase();
+  if (raw === 'true') {
+    return true;
+  }
+  if (raw === 'false') {
+    return false;
+  }
+  throw new Error(
+    `Configuration Error: Environment variable "${name}" must be "true" or "false", got "${raw}".`,
+  );
+}
+
+function getOptional(name: string): string | undefined {
+  const value = process.env[name];
+  if (!value || value.trim() === '') {
+    return undefined;
+  }
+  return value.trim();
+}
+
+function getOptionalNumber(name: string): number | undefined {
+  const value = process.env[name];
+  if (!value || value.trim() === '') {
+    return undefined;
+  }
+  const parsed = Number(value.trim());
+  if (isNaN(parsed)) {
+    throw new Error(
+      `Configuration Error: Environment variable "${name}" must be a valid number, got "${value}".`,
+    );
+  }
+  return parsed;
+}
+
 class DotenvConfig {
   // APP
-  static PORT = Number(process.env.PORT) || 4000;
+  static PORT = getRequiredNumber('PORT');
   static NODE_ENV =
-    (process.env.NODE_ENV?.toUpperCase() as Environment) ||
-    Environment.DEVELOPMENT;
+    Environment[getRequired('NODE_ENV') as keyof typeof Environment];
 
   // AUTH / JWT
-  static JWT_SECRET =
-    process.env.JWT_SECRET || 'stradmont-solutions-jwt-secret-key-2026';
-  static JWT_ACCESS_EXPIRES_SECONDS =
-    Number(process.env.JWT_ACCESS_EXPIRES_SECONDS) || 60 * 60 * 24; // 24 hours
-  static JWT_REFRESH_EXPIRES_SECONDS =
-    Number(process.env.JWT_REFRESH_EXPIRES_SECONDS) || 60 * 60 * 24 * 7; // 7 days
+  static JWT_SECRET = getRequired('JWT_SECRET');
+  static JWT_ACCESS_EXPIRES_SECONDS = getRequiredNumber(
+    'JWT_ACCESS_EXPIRES_SECONDS',
+  );
+  static JWT_REFRESH_EXPIRES_SECONDS = getRequiredNumber(
+    'JWT_REFRESH_EXPIRES_SECONDS',
+  );
 
   // CLOUDFLARE TURNSTILE
-  static TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || '';
+  static TURNSTILE_SECRET_KEY = getRequired('TURNSTILE_SECRET_KEY');
 
-  // DB
-  static DB_TYPE = process.env.DB_TYPE || 'postgres';
-  static DB_HOST = process.env.DB_HOST || 'localhost';
-  static DB_PORT = Number(process.env.DB_PORT) || 5432;
-  static DB_USERNAME = process.env.DB_USERNAME || 'postgres';
-  static DB_PASSWORD = process.env.DB_PASSWORD || 'postgres';
-  static DB_NAME = process.env.DB_NAME || 'stradmont_solutions';
-  static DB_SSL = process.env.DB_SSL === 'true';
+  // DATABASE
+  static DATABASE_URL = getRequired('DATABASE_URL');
+  static DB_SSL = getRequiredBoolean('DB_SSL');
+  static DB_SYNCHRONIZE = getRequiredBoolean('DB_SYNCHRONIZE');
 
   // REDIS
-  static REDIS_ENABLED = process.env.REDIS_ENABLED === 'true';
-  static REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+  static REDIS_ENABLED = getRequiredBoolean('REDIS_ENABLED');
+  static REDIS_URL = getRequired('REDIS_URL');
 
   // MAIL
-  static MAIL_HOST = process.env.MAIL_HOST || '';
-  static MAIL_PORT = Number(process.env.MAIL_PORT) || 587;
-  static MAIL_USER = process.env.MAIL_USER || '';
-  static MAIL_PASSWORD =
-    process.env.MAIL_PASSWORD || process.env.MAIL_PASS || '';
-  static MAIL_FROM =
-    process.env.MAIL_FROM ||
-    process.env.MAIL_USER ||
-    'info@stradmontsolutions.com';
-  static ADMIN_NOTIFICATION_EMAIL =
-    process.env.ADMIN_NOTIFICATION_EMAIL || 'info@stradmontsolutions.com';
+  static MAIL_HOST = getOptional('MAIL_HOST');
+  static MAIL_PORT = getOptionalNumber('MAIL_PORT');
+  static MAIL_USER = getOptional('MAIL_USER');
+  static MAIL_PASSWORD = getOptional('MAIL_PASSWORD');
+  static MAIL_FROM = getRequired('MAIL_FROM');
+  static ADMIN_NOTIFICATION_EMAIL = getRequired('ADMIN_NOTIFICATION_EMAIL');
 
   // LOG
-  static LOG_LEVEL = process.env.LOG_LEVEL || 'info';
+  static LOG_LEVEL = getRequired('LOG_LEVEL');
 
   // URL
-  static FRONTEND_BASE_URL =
-    process.env.FRONTEND_BASE_URL || 'http://localhost:3000';
-  static BASE_URL = process.env.BASE_URL || `http://localhost:${this.PORT}`;
+  static FRONTEND_BASE_URL = getRequired('FRONTEND_BASE_URL');
+  static BASE_URL = getRequired('BASE_URL');
 
-  // MEDIA
-  static MEDIA_UPLOAD_PATH =
-    process.env.MEDIA_UPLOAD_PATH ||
-    path.resolve(process.cwd(), 'public/uploads');
-  static MEDIA_TEMP_PATH =
-    process.env.MEDIA_TEMP_PATH ||
-    path.resolve(process.cwd(), 'public/uploads/temp');
+  // SUPABASE STORAGE
+  static SUPABASE_URL = getRequired('SUPABASE_URL');
+  static SUPABASE_KEY = getRequired('SUPABASE_KEY');
+  static SUPABASE_STORAGE_BUCKET = getRequired('SUPABASE_STORAGE_BUCKET');
 }
 
 export { DotenvConfig };

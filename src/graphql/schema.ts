@@ -5,11 +5,14 @@ import { buildSchema } from 'type-graphql';
 import { DotenvConfig, Environment } from '../config/env.config';
 import { customAuthChecker } from './auth/authChecker';
 import { registerEnums } from './enums';
+import { AdminResolver } from './resolvers/admin.resolver';
 import { AuthResolver } from './resolvers/auth.resolver';
 import { CategoryResolver } from './resolvers/category.resolver';
+import { ContactResolver } from './resolvers/contact.resolver';
 import { CustomerResolver } from './resolvers/customer.resolver';
 import { HealthResolver } from './resolvers/health.resolver';
 import { MediaResolver } from './resolvers/media.resolver';
+import { NotificationResolver } from './resolvers/notification.resolver';
 import { OfferResolver } from './resolvers/offer.resolver';
 import { OrderResolver } from './resolvers/order.resolver';
 import { ProductResolver } from './resolvers/product.resolver';
@@ -25,6 +28,8 @@ export async function createGraphQLSchema(): Promise<GraphQLSchema> {
     resolvers: [
       HealthResolver,
       AuthResolver,
+      AdminResolver,
+      ContactResolver,
       CustomerResolver,
       VendorResolver,
       CategoryResolver,
@@ -33,6 +38,7 @@ export async function createGraphQLSchema(): Promise<GraphQLSchema> {
       OfferResolver,
       OrderResolver,
       MediaResolver,
+      NotificationResolver,
     ],
     container: {
       get: (cls) => container.resolve(cls),
