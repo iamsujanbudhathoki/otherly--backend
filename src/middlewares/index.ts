@@ -178,11 +178,9 @@ export const configMiddleware = (
     });
   });
 
-  // Swagger Documentation (dev only)
-  if (DotenvConfig.NODE_ENV === Environment.DEVELOPMENT) {
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-    app.get('/swagger-json', (_req, res) => res.json(swaggerDocument));
-  }
+  // Swagger Documentation
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  app.get('/swagger-json', (_req, res) => res.json(swaggerDocument));
 
   // Register REST routes and error handling
   RegisterRoutes(app);
