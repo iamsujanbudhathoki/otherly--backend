@@ -4,8 +4,9 @@ import depthLimit from 'graphql-depth-limit';
 import 'reflect-metadata';
 import { ApolloServer } from '@apollo/server';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { AppDataSource } from './config/database.config';
-import { DotenvConfig, Environment } from './config/env.config';
+import { DotenvConfig } from './config/env.config';
 import { GraphQLContext } from './graphql/context';
 import { formatGraphQLError } from './graphql/formatError';
 import { createGraphQLSchema } from './graphql/schema';
@@ -30,9 +31,12 @@ class Server {
         // Initialize Apollo Server with security hardening
         const apolloServer = new ApolloServer<GraphQLContext>({
           schema,
-          plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+          plugins: [
+            ApolloServerPluginDrainHttpServer({ httpServer }),
+            ApolloServerPluginLandingPageLocalDefault({ embed: true }),
+          ],
           validationRules: [depthLimit(7)],
-          introspection: DotenvConfig.NODE_ENV !== Environment.PRODUCTION,
+          introspection: true,
           formatError: (formattedError, error) =>
             formatGraphQLError(formattedError, error),
         });

@@ -25,8 +25,7 @@ export const configMiddleware = (
   // 1. HTTP Security Headers via Helmet
   app.use(
     helmet({
-      contentSecurityPolicy:
-        DotenvConfig.NODE_ENV === Environment.PRODUCTION ? undefined : false,
+      contentSecurityPolicy: false,
       crossOriginEmbedderPolicy: false,
     }),
   );
